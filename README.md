@@ -1,2 +1,2 @@
 # ORMGen
- ORMGen auxiliary library for metaprogramming, code generation, metadata types, dapper wrapper
+ Auxiliary library for metaprogramming, code/script generation. Data mapper (dapper wrapper), metadata types.
