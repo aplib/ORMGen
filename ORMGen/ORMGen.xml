@@ -1,0 +1,211 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ORMGen</name>
+    </assembly>
+    <members>
+        <member name="T:ORMGen.ORMTableInfo">
+            <summary>ORM data mapping base class
+            </summary>
+        </member>
+        <member name="F:ORMGen.ORMTableInfo.Type">
+            <summary>
+            Access to object type
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMTableInfo.Title">
+            <summary>
+            Title for data table
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMTableInfo.As">
+            <summary>
+            Use for code generation
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMTableInfo.TableName">
+            <summary>
+            Data table name
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMTableInfo.IdProperty">
+            <summary>
+            The row identification of the database table, can be a key, composite key, hash property. If not specified using a class attribute, then a single key is selected. Otherwise, an exception is thrown.
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMTableInfo.TextProperty">
+            <summary>
+            Text property that give a representation of the object
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMTableInfo.Props">
+            <summary>
+            List of all properties
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMTableInfo.Keys">
+            <summary>
+            List of key properties
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMTableInfo.References">
+            <summary>
+            List of reference properties
+            </summary>
+        </member>
+        <member name="M:ORMGen.ORMTableInfo.UseDBProvider(ORMGen.DBProviderEnum)">
+            <summary>
+            Selecting the SQL data provider
+            </summary>
+            <param name="provider"></param>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:ORMGen.ORMTableInfo.UseDBFriendly(System.Func{System.String,System.String})" -->
+        <member name="M:ORMGen.ORMHelper.Reject(ORMGen.ORMTableInfo,System.String)">
+            <summary>
+            Select properties other than those listed
+            </summary>
+            <param name="filter">comma-separated property names to be excluded</param>
+            <returns>Enumeration of properties</returns>
+        </member>
+        <member name="M:ORMGen.ORMHelper.Select(ORMGen.ORMTableInfo,System.String)">
+            <summary>
+            Select of specific properties
+            </summary>
+            <param name="filter">comma-separated property names to be selected</param>
+            <returns>Enumeration of properties</returns>
+        </member>
+        <member name="M:ORMGen.ORMHelper.ForSelect(System.Collections.Generic.IEnumerable{ORMGen.ORMPropertyInfo})">
+            <summary>
+            Formatting a list of mapped properties/fields for select script (fields part)
+            </summary>
+            <returns>Fields part of select script</returns>
+        </member>
+        <member name="M:ORMGen.ORMHelper.ForSelectConditionKeys(System.Collections.Generic.IEnumerable{ORMGen.ORMPropertyInfo})">
+            <summary>
+            Formatting a list of mapped properties passed from an object for select script condition (where part)
+            </summary>
+            <returns>(string) condition for where part</returns>
+        </member>
+        <member name="M:ORMGen.ORMHelper.ForInsertValues(System.Collections.Generic.IEnumerable{ORMGen.ORMPropertyInfo})">
+            <summary>
+            Formatting a list of mapped properties passed from an object for insert script (values part)
+            </summary>
+            <returns>(string) for values part</returns>
+        </member>
+        <member name="M:ORMGen.ORMHelper.ForUpdateSet(System.Collections.Generic.IEnumerable{ORMGen.ORMPropertyInfo})">
+            <summary>
+            Formatting a list of values passed from an object for update script (set part)
+            </summary>
+            <returns>(string) for set part</returns>
+        </member>
+        <member name="M:ORMGen.ORMHelper.ForSelectFields(ORMGen.ORMTableInfo)">
+            <summary>
+            Formatting a full properties list of mapped properties passed from an object for select script condition (where part)
+            </summary>
+            <returns>(string) condition for where part</returns>
+        </member>
+        <member name="M:ORMGen.ORMHelper.ForSelectConditionsKeys(ORMGen.ORMTableInfo)">
+            <summary>
+            Formatting a key properties list for select script condition (where part)
+            </summary>
+            <returns>(string) condition for where part</returns>
+        </member>
+        <member name="M:ORMGen.ORMHelper.ForInsertValues(ORMGen.ORMTableInfo)">
+            <summary>
+            Formatting a full list of mapped properties passed from an object for insert script (values part)
+            </summary>
+            <returns>(string) for values part</returns>
+        </member>
+        <member name="M:ORMGen.ORMHelper.ForUpdateSet(ORMGen.ORMTableInfo)">
+            <summary>
+            Formatting a full list of values passed from an object for update script (set part)
+            </summary>
+            <returns>(string) for set part</returns>
+        </member>
+        <member name="T:ORMGen.ORMTableInfo`1">
+            <summary>ORM data mapping generic class derived from base class
+            filled with metadata when created>
+            </summary>
+        </member>
+        <member name="M:ORMGen.ORMTableInfo`1.#ctor">
+            <summary>
+            Create a specified ORMTable filled from metadata object
+            </summary>
+        </member>
+        <member name="T:ORMGen.ORMTableAttribute">
+            <summary>
+            ORMTable attribute
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMTableAttribute.Title">
+            <summary>
+            Use title for codogeneration
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMTableAttribute.As">
+            <summary>
+            Use As for codogeneration
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMTableAttribute.TableName">
+            <summary>
+            Use TableName for script building
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMTableAttribute.IdProperty">
+            <summary>
+            Use IdProperty for codogeneration
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMTableAttribute.TextProperty">
+            <summary>
+            Use TextProperty for codogeneration
+            </summary>
+        </member>
+        <member name="T:ORMGen.ORMPropertyInfo">
+            <summary>
+            Object filled from metadata object describing the data table property and its mapping
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMPropertyInfo.Type">
+            <summary>
+            Type of value, use Type for codogeneration
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMPropertyInfo.Name">
+            <summary>
+            Name of property, use Name for codogeneration
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMPropertyInfo.Title">
+            <summary>
+            Title of property value, use Title for codogeneration
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMPropertyInfo.Field">
+            <summary>
+            Mapping to a field of data table, use Field for script building
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMPropertyInfo.Format">
+            <summary>
+            Format for property value, use Format for codogeneration
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMPropertyInfo.isKey">
+            <summary>
+            It`s a key value, use isKey for codogeneration and script building
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMPropertyInfo.Readonly">
+            <summary>
+            Readonly means not writeable to database, for script building
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMPropertyInfo.RefType">
+            <summary>
+            Referencing tagged ORMTable or other data table classes, use RefType to co-generation
+            </summary>
+        </member>
+    </members>
+</doc>
