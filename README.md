@@ -19,7 +19,7 @@ orm.UseDBProvider(DBProviderEnum.PostgreSQL);
 
 or
 
-var orm = new ORMTableInfo<SomeClass>(DBProviderEnum.PostgreSQL);
+var orm = new ORMTableInfo<SomeClass>(DBProviderEnum.MSSql);
 ```
 
 
