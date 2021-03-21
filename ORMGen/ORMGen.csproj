@@ -8,8 +8,11 @@
     <Copyright>vadim b.</Copyright>
     <PackageLicenseExpression></PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/aplib/ORMGen</PackageProjectUrl>
-    <Description>.NET Minimal helper library for metaprogramming, code/script generation. Data mapper (dapper wrapper), metadata types.</Description>
+    <Description>.NET Minimal helper library, data mapper (dapper wrapper), metadata types, for metaprogramming, code/script generation</Description>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <FileVersion>1.0.0.1</FileVersion>
+    <Version>1.0.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

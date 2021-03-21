@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
 namespace ORMGen
 {
-	/// <summary>ORM data mapping base class
-	/// </summary>
-	public class ORMTableInfo
+    /// <summary>ORM data mapping base class
+    /// </summary>
+    public class ORMTableInfo
 	{
 		/// <summary>
 		/// Access to object type

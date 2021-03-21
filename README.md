@@ -1,5 +1,5 @@
 # ORMGen
- .NET Minimal helper library for metaprogramming, code/script generation. Data mapper (dapper wrapper), metadata types.
+ .NET Minimal helper library, data mapper (dapper wrapper), metadata types, for metaprogramming, code/script generation.
 
 
  Initialize objectject
