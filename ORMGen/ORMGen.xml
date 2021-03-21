@@ -57,7 +57,6 @@
             <summary>
             Selecting the SQL data provider
             </summary>
-            <param name="provider"></param>
         </member>
         <member name="M:ORMGen.ORMTableInfo.UseDBProvider(ORMGen.DBProviderEnum)">
             <summary>
@@ -65,8 +64,17 @@
             </summary>
             <param name="provider"></param>
         </member>
-        <!-- Badly formed XML comment ignored for member "P:ORMGen.ORMTableInfo.DBFriendly" -->
-        <!-- Badly formed XML comment ignored for member "M:ORMGen.ORMTableInfo.UseDBFriendly(System.Func{System.String,System.String})" -->
+        <member name="P:ORMGen.ORMTableInfo.DBFriendly">
+            <summary>
+            String formatting function for compatibility names with the provider
+            </summary>
+        </member>
+        <member name="M:ORMGen.ORMTableInfo.UseDBFriendly(System.Func{System.String,System.String})">
+            <summary>
+            String formatting function for compatibility names with the provider
+            </summary>
+            <param name="db_friendly_func">Func&lt;string, string&gt; db_friendly_func</param>
+        </member>
         <member name="M:ORMGen.ORMHelper.Reject(ORMGen.ORMTableInfo,System.String)">
             <summary>
             Select properties other than those listed
@@ -132,6 +140,11 @@
         <member name="T:ORMGen.ORMTableInfo`1">
             <summary>ORM data mapping generic class derived from base class
             filled with metadata when created>
+            </summary>
+        </member>
+        <member name="M:ORMGen.ORMTableInfo`1.#ctor(ORMGen.DBProviderEnum)">
+            <summary>
+            Create a specified ORMTable filled from metadata object and select DB provider
             </summary>
         </member>
         <member name="M:ORMGen.ORMTableInfo`1.#ctor">
@@ -307,6 +320,27 @@
         <member name="T:ORMGen.ORMRuleSwitcherAttribute">
             <summary>
             ORM rule switcher attribute, effect scoped all subsequent within the class attributes until the next switch
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMRuleSwitcherAttribute.Rules">
+            <summary>
+            Assigned rules
+            </summary>
+        </member>
+        <member name="M:ORMGen.ORMRuleSwitcherAttribute.#ctor(ORMGen.ORMRulEnum[])">
+            <summary>
+            Attribute constructor
+            </summary>
+            <param name="rules"></param>
+        </member>
+        <member name="T:ORMGen.ORMData">
+            <summary>
+            ORM data table Base class of ORM data table, used to build extensions
+            </summary>
+        </member>
+        <member name="T:ORMGen.DBProviderEnum">
+            <summary>
+            Enumeration of SQL providers
             </summary>
         </member>
     </members>

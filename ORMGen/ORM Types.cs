@@ -80,7 +80,9 @@ namespace ORMGen
 				DBProviderEnum.MSSql => MSSQLScriptBuilder.DBFriendly,
 				DBProviderEnum.MySQL => MySQLScriptBuilder.DBFriendly,
 				DBProviderEnum.OracleSQL => OracleSQLScriptBuilder.DBFriendly,
-				DBProviderEnum.PostgreSQL => PostgreSQLScriptBuilder.DBFriendly
+				DBProviderEnum.PostgreSQL => PostgreSQLScriptBuilder.DBFriendly,
+				_ => MSSQLScriptBuilder.DBFriendly
+
 			};
 		}
 
@@ -88,12 +90,11 @@ namespace ORMGen
 		/// <summary>
 		/// String formatting function for compatibility names with the provider
 		/// </summary>
-		/// <param name="Func<string, string> db_friendly_func"></param>
 		public Func<string, string> DBFriendly { get => db_friendly; internal set => UseDBFriendly(value); }
 		/// <summary>
 		/// String formatting function for compatibility names with the provider
 		/// </summary>
-		/// <param name="Func<string, string> db_friendly_func"></param>
+		/// <param name="db_friendly_func">Func&lt;string, string&gt; db_friendly_func</param>
 		public void UseDBFriendly(Func<string, string> db_friendly_func)
 		{
 			if (db_friendly_func == db_friendly)
@@ -152,22 +153,22 @@ namespace ORMGen
 		/// Formatting a full properties list of mapped properties passed from an object for select script condition (where part)
 		/// </summary>
 		/// <returns>(string) condition for where part</returns>
-		public static string ForSelectFields(ORMTableInfo orm) => string.Join(",", orm.Props.Select(prop => prop.parent.DBFriendly(prop.Field) + " as " + prop.Name));
+		public static string ForSelectFields(this ORMTableInfo orm) => string.Join(",", orm.Props.Select(prop => orm.DBFriendly(prop.Field) + " as " + prop.Name));
 		/// <summary>
 		/// Formatting a key properties list for select script condition (where part)
 		/// </summary>
 		/// <returns>(string) condition for where part</returns>
-		public static string ForSelectConditionsKeys(ORMTableInfo orm) => string.Join(" and ", orm.Keys.Select(prop => orm.DBFriendly(prop.Field) + "=@" + prop.Name));
+		public static string ForSelectConditionKeys(this ORMTableInfo orm) => string.Join(" and ", orm.Keys.Select(prop => orm.DBFriendly(prop.Field) + "=@" + prop.Name));
 		/// <summary>
 		/// Formatting a full list of mapped properties passed from an object for insert script (values part)
 		/// </summary>
 		/// <returns>(string) for values part</returns>
-		public static string ForInsertValues(ORMTableInfo orm) => string.Join(",", orm.Props.Select(prop => "@" + prop.Name));
+		public static string ForInsertValues(this ORMTableInfo orm) => string.Join(",", orm.Props.Select(prop => "@" + prop.Name));
 		/// <summary>
 		/// Formatting a full list of values passed from an object for update script (set part)
 		/// </summary>
 		/// <returns>(string) for set part</returns>
-		public static string ForUpdateSet(ORMTableInfo orm) => string.Join(", ", orm.Props.Where(prop => !prop.isKey && !prop.Readonly).Select(prop => prop.parent.DBFriendly(prop.Field) + "=@" + prop.Name));
+		public static string ForUpdateSet(this ORMTableInfo orm) => string.Join(", ", orm.Props.Where(prop => !prop.isKey && !prop.Readonly).Select(prop => prop.parent.DBFriendly(prop.Field) + "=@" + prop.Name));
 
 	}
 	
@@ -385,7 +386,7 @@ namespace ORMGen
 		/// <summary>
 		/// Format for property value, use Format for codogeneration
 		/// </summary>
-		public string Format { get; internal set; }
+		public string Format { get; init; }
 		/// <summary>
 		/// Indicates that the property value is the key value, use isKey to generate and script together.
 		/// </summary>
@@ -428,6 +429,7 @@ namespace ORMGen
 	/// </summary>
 	public enum ORMRulEnum
 	{
+		Unassigned = 0,
 		/// <summary>
 		/// Map name to database unchanged
 		/// </summary>
@@ -468,46 +470,52 @@ namespace ORMGen
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
 	public class ORMRuleSwitcherAttribute : Attribute
 	{
+		/// <summary>
+		/// Assigned rules
+		/// </summary>
 		public ORMRulEnum Rules { get; init; }
-
+		/// <summary>
+		/// Attribute constructor
+		/// </summary>
+		/// <param name="rules"></param>
 		public ORMRuleSwitcherAttribute(params ORMRulEnum[] rules)
 		{
 			ORMRulEnum _rules = 0;
 			foreach (var rule in rules)
 				_rules |= rule;
 
-			if ((_rules & ORMRulEnum.__DBMask) == 0)
-				_rules |= ORMRulEnum.DBNameAsIs;
-
-			if ((_rules & ORMRulEnum.__ViewMask) == 0)
-				_rules |= ORMRulEnum.ViewNameAsIs;
-
 			Rules = _rules;
 		}
 	}
 
+	/// <summary>
+	/// ORM data table Base class of ORM data table, used to build extensions
+	/// </summary>
 	public class ORMData
 	{
 	}
 
+	/// <summary>
+	/// Enumeration of SQL providers
+	/// </summary>
 	public enum DBProviderEnum { MSSql, MySQL, OracleSQL, PostgreSQL }
 
-	public static class OracleSQLScriptBuilder
+	internal static class OracleSQLScriptBuilder
 	{
 		public static string DBFriendly(string name) => name.StartsWith('"') ? name : ('"' + name + '"');
 	}
-	
-	public static class MSSQLScriptBuilder
+
+	internal static class MSSQLScriptBuilder
 	{
 		public static string DBFriendly(string name) => name.StartsWith('[') ? name : ("[" + name + "]");
 	}
 
-	public static class PostgreSQLScriptBuilder
+	internal static class PostgreSQLScriptBuilder
 	{
 		public static string DBFriendly(string name) =>name.StartsWith('"') ? name : ('"' + name + '"');
 	}
 
-	public static class MySQLScriptBuilder
+	internal static class MySQLScriptBuilder
 	{
 		public static string DBFriendly(string name) => name.StartsWith('"') ? name : ('`' + name + '`');
 	}
