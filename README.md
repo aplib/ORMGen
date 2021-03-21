@@ -37,6 +37,8 @@ public class SomeClass
         
 }
 
+// select
+
 var script = $@"select {orm.ForSelectFields()} from {orm.TableName}";
 var enum_objects = conn.Query<SomeClass>(script);
 
@@ -45,6 +47,8 @@ var enum_objects = conn.Query<SomeClass>(script);
 var some_object = enum_objects.First();
 script = $@"select {orm.ForSelectFields()} from {orm.TableName} where {orm.ForSelectConditionKeys()}";
 var data_object = conn.QuerySingle<SomeClass>(script, some_object);
+
+// update
 
 data_object.Text = " some text ...";
 script = $@"update table {orm.TableName} set {orm.Select("Text").ForUpdateSet()} where {orm.ForSelectConditionKeys()}";
