@@ -10,7 +10,7 @@ Features:
 Helper object populated class metadata and specialized custom attributes.
 Can be used for code and script generation.
 
-Creation:
+Object creation:
 --------
 
 ```

@@ -8,7 +8,7 @@
     <Copyright>vadim b.</Copyright>
     <PackageLicenseExpression></PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/aplib/ORMGen</PackageProjectUrl>
-    <Description>Auxiliary library for metaprogramming, code/script generation. Data mapper (dapper wrapper), metadata types.</Description>
+    <Description>.NET Minimal helper library for metaprogramming, code/script generation. Data mapper (dapper wrapper), metadata types.</Description>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
   </PropertyGroup>
 

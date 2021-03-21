@@ -119,7 +119,7 @@
             </summary>
             <returns>(string) condition for where part</returns>
         </member>
-        <member name="M:ORMGen.ORMHelper.ForSelectConditionsKeys(ORMGen.ORMTableInfo)">
+        <member name="M:ORMGen.ORMHelper.ForSelectConditionKeys(ORMGen.ORMTableInfo)">
             <summary>
             Formatting a key properties list for select script condition (where part)
             </summary>
