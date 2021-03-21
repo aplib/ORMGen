@@ -53,12 +53,19 @@
             List of reference properties
             </summary>
         </member>
+        <member name="P:ORMGen.ORMTableInfo.DBProvider">
+            <summary>
+            Selecting the SQL data provider
+            </summary>
+            <param name="provider"></param>
+        </member>
         <member name="M:ORMGen.ORMTableInfo.UseDBProvider(ORMGen.DBProviderEnum)">
             <summary>
             Selecting the SQL data provider
             </summary>
             <param name="provider"></param>
         </member>
+        <!-- Badly formed XML comment ignored for member "P:ORMGen.ORMTableInfo.DBFriendly" -->
         <!-- Badly formed XML comment ignored for member "M:ORMGen.ORMTableInfo.UseDBFriendly(System.Func{System.String,System.String})" -->
         <member name="M:ORMGen.ORMHelper.Reject(ORMGen.ORMTableInfo,System.String)">
             <summary>
@@ -164,7 +171,7 @@
         </member>
         <member name="T:ORMGen.ORMPropertyInfo">
             <summary>
-            Object filled from metadata object describing the data table property and its mapping
+            Represent property attributes. Object filled with metadata describing the data table property and its mapping.
             </summary>
         </member>
         <member name="P:ORMGen.ORMPropertyInfo.Type">
@@ -184,7 +191,7 @@
         </member>
         <member name="P:ORMGen.ORMPropertyInfo.Field">
             <summary>
-            Mapping to a field of data table, use Field for script building
+            Mapping property to a field of data table, use Field for script building
             </summary>
         </member>
         <member name="P:ORMGen.ORMPropertyInfo.Format">
@@ -194,7 +201,7 @@
         </member>
         <member name="P:ORMGen.ORMPropertyInfo.isKey">
             <summary>
-            It`s a key value, use isKey for codogeneration and script building
+            Indicates that the property value is the key value, use isKey to generate and script together.
             </summary>
         </member>
         <member name="P:ORMGen.ORMPropertyInfo.Readonly">
@@ -205,6 +212,101 @@
         <member name="P:ORMGen.ORMPropertyInfo.RefType">
             <summary>
             Referencing tagged ORMTable or other data table classes, use RefType to co-generation
+            </summary>
+        </member>
+        <member name="T:ORMGen.ORMPropertyAttribute">
+            <summary>
+            Object contains data mapping and other metadata.
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMPropertyAttribute.Title">
+            <summary>
+            Title of property value, use Title for codogeneration
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMPropertyAttribute.Field">
+            <summary>
+            Mapping property to a field of data table, use Field for script building
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMPropertyAttribute.Format">
+            <summary>
+            Format for property value, use Format for codogeneration
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMPropertyAttribute.isKey">
+            <summary>
+            Indicates that the property value is the key value, use isKey to generate and script together.
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMPropertyAttribute.Readonly">
+            <summary>
+            Readonly means not writeable to database, for script building
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMPropertyAttribute.RefType">
+            <summary>
+            Referencing tagged ORMTable or other data table classes, use RefType to co-generation
+            </summary>
+        </member>
+        <member name="T:ORMGen.ORMKey">
+            <summary>
+            Shortly definition of a key property, something like this [ORMKey]
+            </summary>
+        </member>
+        <member name="T:ORMGen.ORMReadonly">
+            <summary>
+            Shortly definition of a readonly field of data table, something like this [ORMReadonly]
+            </summary>
+        </member>
+        <member name="T:ORMGen.ORMReadonlyKey">
+            <summary>
+            Shortly definition of a readonly key field of data table, something like this [ORMReadonlyKey]
+            </summary>
+        </member>
+        <member name="T:ORMGen.ORMRulEnum">
+            <summary>
+            Eenumeration of rules for mapping to database and view
+            </summary>
+        </member>
+        <member name="F:ORMGen.ORMRulEnum.DBNameAsIs">
+            <summary>
+            Map name to database unchanged
+            </summary>
+        </member>
+        <member name="F:ORMGen.ORMRulEnum.DBReplaceUnderscoresWithSpaces">
+            <summary>
+            Replace the name with spaces for underscores to match against the database
+            </summary>
+        </member>
+        <member name="F:ORMGen.ORMRulEnum.DBRemoveUnderscoresAndCapitalize">
+            <summary>
+            Remove underscores and capitalize Name to match against the database
+            </summary>
+        </member>
+        <member name="F:ORMGen.ORMRulEnum.ViewNameAsIs">
+            <summary>
+            Map to view Name unchanged
+            </summary>
+        </member>
+        <member name="F:ORMGen.ORMRulEnum.ViewUnderscoresReplaceSpaces">
+            <summary>
+            Remove underscores and capitalize Name to view
+            </summary>
+        </member>
+        <member name="F:ORMGen.ORMRulEnum.ViewWithUppercase">
+            <summary>
+            To view title with uppercase
+            </summary>
+        </member>
+        <member name="F:ORMGen.ORMRulEnum.ViewHumanitaize">
+            <summary>
+            To view title humanitize
+            </summary>
+        </member>
+        <member name="T:ORMGen.ORMRuleSwitcherAttribute">
+            <summary>
+            ORM rule switcher attribute, effect scoped all subsequent within the class attributes until the next switch
             </summary>
         </member>
     </members>

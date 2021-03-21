@@ -60,30 +60,47 @@ namespace ORMGen
 			return idProperty ?? Keys[0].Name;
 		}
 
-		public static DBProviderEnum db_provider { get; internal set; } = DBProviderEnum.MSSql;
-
-		public DBProviderEnum DBProvider { get; internal set; }
+		static DBProviderEnum db_provider = DBProviderEnum.MSSql;
+		/// <summary>
+		/// Selecting the SQL data provider
+		/// </summary>
+		public DBProviderEnum DBProvider { get => db_provider; internal set => UseDBProvider(value); }
 		/// <summary>
 		/// Selecting the SQL data provider
 		/// </summary>
 		/// <param name="provider"></param>
 		public void UseDBProvider(DBProviderEnum provider)
 		{
-			DBProvider = provider;
+			if (provider == db_provider)
+				return;
+
+			db_provider = provider;
 			DBFriendly = provider switch
 			{
 				DBProviderEnum.MSSql => MSSQLScriptBuilder.DBFriendly,
 				DBProviderEnum.MySQL => MySQLScriptBuilder.DBFriendly,
 				DBProviderEnum.OracleSQL => OracleSQLScriptBuilder.DBFriendly,
-				DBProviderEnum.PostgreSQL => MSSQLScriptBuilder.DBFriendly
+				DBProviderEnum.PostgreSQL => PostgreSQLScriptBuilder.DBFriendly
 			};
 		}
-		public Func<string, string> DBFriendly { get; internal set; } = MSSQLScriptBuilder.DBFriendly;
+
+		static Func<string, string> db_friendly = MSSQLScriptBuilder.DBFriendly;
 		/// <summary>
-		/// String formatting for compatibility with the provider
+		/// String formatting function for compatibility names with the provider
 		/// </summary>
 		/// <param name="Func<string, string> db_friendly_func"></param>
-		public void UseDBFriendly(Func<string, string> db_friendly_func) => DBFriendly = db_friendly_func;
+		public Func<string, string> DBFriendly { get => db_friendly; internal set => UseDBFriendly(value); }
+		/// <summary>
+		/// String formatting function for compatibility names with the provider
+		/// </summary>
+		/// <param name="Func<string, string> db_friendly_func"></param>
+		public void UseDBFriendly(Func<string, string> db_friendly_func)
+		{
+			if (db_friendly_func == db_friendly)
+				return;
+
+			db_friendly = db_friendly_func;
+		}
 	}
 
 
@@ -160,6 +177,13 @@ namespace ORMGen
 	public class ORMTableInfo<T> : ORMTableInfo
 	{
 		/// <summary>
+		/// Create a specified ORMTable filled from metadata object and select DB provider
+		/// </summary>
+		public ORMTableInfo(DBProviderEnum provider) : this()
+		{
+			UseDBProvider(provider);
+		}
+		/// <summary>
 		/// Create a specified ORMTable filled from metadata object
 		/// </summary>
 		public ORMTableInfo()
@@ -170,7 +194,7 @@ namespace ORMGen
 
 			TypeInfo table_type_info = Type.GetTypeInfo();
 
-			var current_rules = ORMRulEnum.DBNameAsIs | ORMRulEnum.ForPresentHumanitaize;
+			var current_rules = ORMRulEnum.DBNameAsIs | ORMRulEnum.ViewHumanitaize;
 			void SetRules(ORMRuleSwitcherAttribute attr, ORMRulEnum mask)
 			{
 				if ((attr.Rules & mask) != 0)
@@ -185,12 +209,12 @@ namespace ORMGen
 			foreach (var rule_attr in table_type_info.GetCustomAttributes<ORMRuleSwitcherAttribute>())
 			{
 				SetRules(rule_attr, ORMRulEnum.__DBMask);
-				SetRules(rule_attr, ORMRulEnum.__ForPresentMask);
+				SetRules(rule_attr, ORMRulEnum.__ViewMask);
 			}
 
 			// SetRules rules
 			TableName = table_attr.TableName ?? table_type_info.Name.AccordDBRule(current_rules & ORMRulEnum.__DBMask);
-			Title = (table_attr.Title ?? table_type_info.Name).AccordPRRule(current_rules & ORMRulEnum.__ForPresentMask);
+			Title = (table_attr.Title ?? table_type_info.Name).AccordViewRule(current_rules & ORMRulEnum.__ViewMask);
 			IdProperty = table_attr.IdProperty;
 			TextProperty = table_attr.TextProperty;
 			As = table_attr.As ?? table_type_info.Name;
@@ -207,7 +231,7 @@ namespace ORMGen
 				foreach (var rule_attr in prop_info.GetCustomAttributes<ORMRuleSwitcherAttribute>())
 				{
 					SetRules(rule_attr, ORMRulEnum.__DBMask);
-					SetRules(rule_attr, ORMRulEnum.__ForPresentMask);
+					SetRules(rule_attr, ORMRulEnum.__ViewMask);
 				}
 
 				// create ORMPropertyInfo
@@ -219,13 +243,13 @@ namespace ORMGen
 				{
 					orm_pi.Field = orm_prop_attr.Field ?? prop_info.Name.AccordDBRule(current_rules & ORMRulEnum.__DBMask);
 					orm_pi.Format = orm_prop_attr.Format;
-					orm_pi.Title = orm_prop_attr.Title ?? prop_info.Name.AccordPRRule(current_rules & ORMRulEnum.__ForPresentMask);
+					orm_pi.Title = orm_prop_attr.Title ?? prop_info.Name.AccordViewRule(current_rules & ORMRulEnum.__ViewMask);
 					orm_pi.isKey = orm_prop_attr.isKey;
 					orm_pi.Readonly = orm_prop_attr.Readonly;
 					orm_pi.RefType = orm_prop_attr.RefType;
 				}
 
-				if (orm_pi.Title == null) orm_pi.Title = orm_pi.Name.AccordPRRule(current_rules & ORMRulEnum.__ForPresentMask);
+				if (orm_pi.Title == null) orm_pi.Title = orm_pi.Name.AccordViewRule(current_rules & ORMRulEnum.__ViewMask);
 				if (orm_pi.Field == null) orm_pi.Field = orm_pi.Name.AccordDBRule(current_rules & ORMRulEnum.__DBMask);
 
 				all_props_orm_info.Add(orm_pi);
@@ -249,11 +273,11 @@ namespace ORMGen
 			_ => name
 		};
 
-		public static string AccordPRRule(this string name, ORMRulEnum rule) => rule switch
+		public static string AccordViewRule(this string name, ORMRulEnum rule) => rule switch
 		{
-			ORMRulEnum.ForPresentUnderscoresReplaceSpaces => name.Replace('_', ' '),
-			ORMRulEnum.ForPresentToTitleCase => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.Replace('_', ' ')),
-			ORMRulEnum.ForPresentHumanitaize => Humanitaize(name),
+			ORMRulEnum.ViewUnderscoresReplaceSpaces => name.Replace('_', ' '),
+			ORMRulEnum.ViewWithUppercase => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.Replace('_', ' ')),
+			ORMRulEnum.ViewHumanitaize => Humanitaize(name),
 			_ => name
 		};
 
@@ -306,7 +330,7 @@ namespace ORMGen
 	}
 
 	/// <summary>
-	/// Object filled from metadata object describing the data table property and its mapping
+	/// Represent property attributes. Object filled with metadata describing the data table property and its mapping.
 	/// </summary>
 	public class ORMPropertyInfo
 	{
@@ -324,7 +348,7 @@ namespace ORMGen
 		/// </summary>
 		public string Title { get; internal set; }
 		/// <summary>
-		/// Mapping to a field of data table, use Field for script building
+		/// Mapping property to a field of data table, use Field for script building
 		/// </summary>
 		public string Field { get; internal set; }
 		/// <summary>
@@ -332,7 +356,7 @@ namespace ORMGen
 		/// </summary>
 		public string Format { get; internal set; }
 		/// <summary>
-		/// It`s a key value, use isKey for codogeneration and script building
+		/// Indicates that the property value is the key value, use isKey to generate and script together.
 		/// </summary>
 		public bool isKey { get; internal set; }
 		/// <summary>
@@ -344,50 +368,103 @@ namespace ORMGen
 		/// </summary>
 		public Type RefType { get; internal set; }
 	}
-
+	/// <summary>
+	/// Object contains data mapping and other metadata.
+	/// </summary>
 	[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
 	public class ORMPropertyAttribute : Attribute
 	{
+		/// <summary>
+		/// Title of property value, use Title for codogeneration
+		/// </summary>
 		public string Title { get; init; }
+		/// <summary>
+		/// Mapping property to a field of data table, use Field for script building
+		/// </summary>
 		public string Field { get; init; }
+		/// <summary>
+		/// Format for property value, use Format for codogeneration
+		/// </summary>
 		public string Format { get; internal set; }
+		/// <summary>
+		/// Indicates that the property value is the key value, use isKey to generate and script together.
+		/// </summary>
 		public bool isKey { get; init; }
+		/// <summary>
+		/// Readonly means not writeable to database, for script building
+		/// </summary>
 		public bool Readonly { get; init; }
+		/// <summary>
+		/// Referencing tagged ORMTable or other data table classes, use RefType to co-generation
+		/// </summary>
 		public Type RefType { get; init; }
 	}
-
+	/// <summary>
+	/// Shortly definition of a key property, something like this [ORMKey]
+	/// </summary>
 	[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
 	public class ORMKey : ORMPropertyAttribute
 	{
 		public ORMKey() { isKey = true; }
 	}
+	/// <summary>
+	/// Shortly definition of a readonly field of data table, something like this [ORMReadonly]
+	/// </summary>
 	[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-	public class Readonly : ORMPropertyAttribute
+	public class ORMReadonly : ORMPropertyAttribute
 	{
-		public Readonly() { Readonly = true; }
+		public ORMReadonly() { Readonly = true; }
 	}
+	/// <summary>
+	/// Shortly definition of a readonly key field of data table, something like this [ORMReadonlyKey]
+	/// </summary>
 	[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-	public class ReadonlyKey : ORMPropertyAttribute
+	public class ORMReadonlyKey : ORMPropertyAttribute
 	{
-		public ReadonlyKey() { isKey = true; Readonly = true; }
+		public ORMReadonlyKey() { isKey = true; Readonly = true; }
 	}
-
+	/// <summary>
+	/// Eenumeration of rules for mapping to database and view
+	/// </summary>
 	public enum ORMRulEnum
 	{
-		DBNameAsIs = 1,                     // Default value
-		DBReplaceUnderscoresWithSpaces = 2,     // Replace underscores with spaces
-		DBRemoveUnderscoresAndCapitalize = 4,  // Remove underscores and capitalize
+		/// <summary>
+		/// Map name to database unchanged
+		/// </summary>
+		DBNameAsIs = 1,
+		/// <summary>
+		/// Replace the name with spaces for underscores to match against the database
+		/// </summary>
+		DBReplaceUnderscoresWithSpaces = 2,
+		/// <summary>
+		/// Remove underscores and capitalize Name to match against the database
+		/// </summary>
+		DBRemoveUnderscoresAndCapitalize = 4,
 
 		__DBMask = 31,
 
-		ForPresentNameAsIs = 32,             // Default value,
-		ForPresentUnderscoresReplaceSpaces = 64,
-		ForPresentToTitleCase = 128,
-		ForPresentHumanitaize = 256,
+		/// <summary>
+		/// Map to view Name unchanged
+		/// </summary>
+		ViewNameAsIs = 32,
+		/// <summary>
+		/// Remove underscores and capitalize Name to view
+		/// </summary>
+		ViewUnderscoresReplaceSpaces = 64,
+		/// <summary>
+		/// To view title with uppercase
+		/// </summary>
+		ViewWithUppercase = 128,
+		/// <summary>
+		/// To view title humanitize
+		/// </summary>
+		ViewHumanitaize = 256,
 
-		__ForPresentMask = 480
+		__ViewMask = 480
 	}
-
+	/// <summary>
+	/// ORM rule switcher attribute, effect scoped all subsequent within the class attributes until the next switch
+	/// </summary>
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
 	public class ORMRuleSwitcherAttribute : Attribute
 	{
@@ -402,8 +479,8 @@ namespace ORMGen
 			if ((_rules & ORMRulEnum.__DBMask) == 0)
 				_rules |= ORMRulEnum.DBNameAsIs;
 
-			if ((_rules & ORMRulEnum.__ForPresentMask) == 0)
-				_rules |= ORMRulEnum.ForPresentNameAsIs;
+			if ((_rules & ORMRulEnum.__ViewMask) == 0)
+				_rules |= ORMRulEnum.ViewNameAsIs;
 
 			Rules = _rules;
 		}
