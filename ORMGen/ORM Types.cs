@@ -101,6 +101,20 @@ namespace ORMGen
 
 			db_friendly = db_friendly_func;
 		}
+
+		ORMRulEnum default_rules = ORMRulEnum.DBReplaceUnderscoresWithSpaces | ORMRulEnum.ViewHumanitaize;
+		/// <summary>
+		/// Default mapping rules
+		/// </summary>
+		public ORMRulEnum Rules { get=>default_rules; set=>UseRules(value); }
+		/// <summary>
+		/// Set default mapping rules
+		/// </summary>
+		public void UseRules(ORMRulEnum rules)
+        {
+			if (rules != default_rules)
+				default_rules = rules;
+		}
 	}
 
 	public static class ORMHelper
@@ -192,7 +206,7 @@ namespace ORMGen
 
 			TypeInfo table_type_info = Type.GetTypeInfo();
 
-			var current_rules = ORMRulEnum.DBNameAsIs | ORMRulEnum.ViewHumanitaize;
+			var current_rules = Rules;
 			void SetRules(ORMRuleSwitcherAttribute attr, ORMRulEnum mask)
 			{
 				if ((attr.Rules & mask) != 0)
@@ -245,6 +259,7 @@ namespace ORMGen
 					orm_pi.isKey = orm_prop_attr.isKey;
 					orm_pi.Readonly = orm_prop_attr.Readonly;
 					orm_pi.RefType = orm_prop_attr.RefType;
+					orm_pi.Hide = orm_prop_attr.Hide;
 				}
 
 				if (orm_pi.Title == null) orm_pi.Title = orm_pi.Name.AccordViewRule(current_rules & ORMRulEnum.__ViewMask);
@@ -365,6 +380,10 @@ namespace ORMGen
 		/// Referencing tagged ORMTable or other data table classes, use RefType to co-generation
 		/// </summary>
 		public Type RefType { get; internal set; }
+		/// <summary>
+		/// Not displayed property, for codogeneration
+		/// </summary>
+		public bool Hide { get; internal set; }
 	}
 	/// <summary>
 	/// Object contains data mapping and other metadata.
@@ -396,6 +415,10 @@ namespace ORMGen
 		/// Referencing tagged ORMTable or other data table classes, use RefType to co-generation
 		/// </summary>
 		public Type RefType { get; init; }
+		/// <summary>
+		/// Not displayed property, for codogeneration
+		/// </summary>
+		public bool Hide { get; init; }
 	}
 	/// <summary>
 	/// Shortly definition of a key property, something like this [ORMKey]
