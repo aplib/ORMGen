@@ -103,8 +103,6 @@ namespace ORMGen
 		}
 	}
 
-
-
 	public static class ORMHelper
 	{
 		/// <summary>
