@@ -2,7 +2,7 @@
  .NET Minimal helper library, data mapper (dapper wrapper), metadata types, for metaprogramming, code/script generation.
 
 
- Initialize objectject
+ Initialize object
 ------------------------------------------------------------
 
 Features:
@@ -10,7 +10,7 @@ Features:
 Helper object populated class metadata and specialized custom attributes.
 Can be used for code and script generation.
 
-Object creation:
+Object initialization:
 --------
 
 ```
@@ -20,6 +20,11 @@ orm.UseDBProvider(DBProviderEnum.PostgreSQL);
 or
 
 var orm = new ORMTableInfo<SomeClass>(DBProviderEnum.MSSql);
+
+// optional:
+
+orm.UseRules(ORMRulEnum.ViewHumanitaize | ORMRulEnum.DBReplaceUnderscoresWithSpaces);
+
 ```
 
 
@@ -28,12 +33,11 @@ Something like this:
 
 
 ```
-// for ORM class by defult assigned rules:
+// for ORM class by defult assigned rules for ato mapping fields:
 
 [ORMRuleSwitcher(ORMRulEnum.ViewHumanitaize, ORMRulEnum.DBReplaceUnderscoresWithSpaces)]
 
 switching can be inside of class, usually not required
-
 
 // Model definition:
 
