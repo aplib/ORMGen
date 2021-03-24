@@ -28,13 +28,21 @@ Something like this:
 
 
 ```
+// for ORM class by defult assigned rules:
+
+[ORMRuleSwitcher(ORMRulEnum.ViewHumanitaize, ORMRulEnum.DBReplaceUnderscoresWithSpaces)]
+
+switching can be inside of class, usually not required
+
+
+// Model definition:
+
 [ORMTable(TableName = "Some table", TextProperty = "Text")]
 public class SomeClass
 {
     [ORMReadonlyKey]
     public int Id { get; set; }
     public string Text { get; set; }
-        
 }
 
 // select
