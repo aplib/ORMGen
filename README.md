@@ -65,5 +65,6 @@ var data_object = conn.QuerySingle<SomeClass>(script, some_object);
 data_object.Text = " some text ...";
 script = $@"update table {orm.TableName} set {orm.Select("Text").ForUpdateSet()} where {orm.ForSelectConditionKeys()}";
 conn.Execute(script, data_object);
-
 ```
+
+you can control the composition of fields using the following methods Select or Reject

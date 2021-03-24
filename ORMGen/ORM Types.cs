@@ -133,6 +133,17 @@ namespace ORMGen
 			return orm.Props.Where(orm_pi => !parts.Contains(orm_pi.Name));
 		}
 		/// <summary>
+		/// Properties except those specified
+		/// </summary>
+		/// <param name="props">this enumeration properties</param>
+		/// <param name="filter">comma-separated property names to be excluded</param>
+		/// <returns></returns>
+		public static IEnumerable<ORMPropertyInfo> Reject(this IEnumerable<ORMPropertyInfo> props, string filter)
+		{
+			var parts = filter.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+			return props.Where(orm_pi => !parts.Contains(orm_pi.Name));
+		}
+		/// <summary>
 		/// Select of specific properties
 		/// </summary>
 		/// <param name="orm">ORM instance</param>
@@ -143,6 +154,8 @@ namespace ORMGen
 			var parts = filter.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 			return orm.Props.Where(orm_pi => parts.Contains(orm_pi.Name));
 		}
+
+
 		/// <summary>
 		/// Formatting a list of mapped properties/fields for select script (fields part)
 		/// </summary>

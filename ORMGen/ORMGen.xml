@@ -93,6 +93,14 @@
             <param name="filter">comma-separated property names to be excluded</param>
             <returns>Enumeration of properties</returns>
         </member>
+        <member name="M:ORMGen.ORMHelper.Reject(System.Collections.Generic.IEnumerable{ORMGen.ORMPropertyInfo},System.String)">
+            <summary>
+            Properties except those specified
+            </summary>
+            <param name="props">this enumeration properties</param>
+            <param name="filter">comma-separated property names to be excluded</param>
+            <returns></returns>
+        </member>
         <member name="M:ORMGen.ORMHelper.Select(ORMGen.ORMTableInfo,System.String)">
             <summary>
             Select of specific properties
