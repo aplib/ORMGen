@@ -75,10 +75,21 @@
             </summary>
             <param name="db_friendly_func">Func&lt;string, string&gt; db_friendly_func</param>
         </member>
+        <member name="P:ORMGen.ORMTableInfo.Rules">
+            <summary>
+            Default mapping rules
+            </summary>
+        </member>
+        <member name="M:ORMGen.ORMTableInfo.UseRules(ORMGen.ORMRulEnum)">
+            <summary>
+            Set default mapping rules
+            </summary>
+        </member>
         <member name="M:ORMGen.ORMHelper.Reject(ORMGen.ORMTableInfo,System.String)">
             <summary>
             Select properties other than those listed
             </summary>
+            <param name="orm">ORM instance</param>
             <param name="filter">comma-separated property names to be excluded</param>
             <returns>Enumeration of properties</returns>
         </member>
@@ -86,6 +97,7 @@
             <summary>
             Select of specific properties
             </summary>
+            <param name="orm">ORM instance</param>
             <param name="filter">comma-separated property names to be selected</param>
             <returns>Enumeration of properties</returns>
         </member>
@@ -227,6 +239,11 @@
             Referencing tagged ORMTable or other data table classes, use RefType to co-generation
             </summary>
         </member>
+        <member name="P:ORMGen.ORMPropertyInfo.Hide">
+            <summary>
+            Not displayed property, for codogeneration
+            </summary>
+        </member>
         <member name="T:ORMGen.ORMPropertyAttribute">
             <summary>
             Object contains data mapping and other metadata.
@@ -262,7 +279,17 @@
             Referencing tagged ORMTable or other data table classes, use RefType to co-generation
             </summary>
         </member>
+        <member name="P:ORMGen.ORMPropertyAttribute.Hide">
+            <summary>
+            Not displayed property, for codogeneration
+            </summary>
+        </member>
         <member name="T:ORMGen.ORMKey">
+            <summary>
+            Shortly definition of a key property, something like this [ORMKey]
+            </summary>
+        </member>
+        <member name="M:ORMGen.ORMKey.#ctor">
             <summary>
             Shortly definition of a key property, something like this [ORMKey]
             </summary>
@@ -272,7 +299,17 @@
             Shortly definition of a readonly field of data table, something like this [ORMReadonly]
             </summary>
         </member>
+        <member name="M:ORMGen.ORMReadonly.#ctor">
+            <summary>
+            Shortly definition of a readonly field of data table, something like this [ORMReadonly]
+            </summary>
+        </member>
         <member name="T:ORMGen.ORMReadonlyKey">
+            <summary>
+            Shortly definition of a readonly key field of data table, something like this [ORMReadonlyKey]
+            </summary>
+        </member>
+        <member name="M:ORMGen.ORMReadonlyKey.#ctor">
             <summary>
             Shortly definition of a readonly key field of data table, something like this [ORMReadonlyKey]
             </summary>
