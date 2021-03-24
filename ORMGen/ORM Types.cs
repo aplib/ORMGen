@@ -117,11 +117,14 @@ namespace ORMGen
 		}
 	}
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 	public static class ORMHelper
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	{
 		/// <summary>
 		/// Select properties other than those listed
 		/// </summary>
+		/// <param name="orm">ORM instance</param>
 		/// <param name="filter">comma-separated property names to be excluded</param>
 		/// <returns>Enumeration of properties</returns>
 		public static IEnumerable<ORMPropertyInfo> Reject(this ORMTableInfo orm, string filter)
@@ -132,6 +135,7 @@ namespace ORMGen
 		/// <summary>
 		/// Select of specific properties
 		/// </summary>
+		/// <param name="orm">ORM instance</param>
 		/// <param name="filter">comma-separated property names to be selected</param>
 		/// <returns>Enumeration of properties</returns>
 		public static IEnumerable<ORMPropertyInfo> Select(this ORMTableInfo orm, string filter)
@@ -426,6 +430,9 @@ namespace ORMGen
 	[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
 	public class ORMKey : ORMPropertyAttribute
 	{
+		/// <summary>
+		/// Shortly definition of a key property, something like this [ORMKey]
+		/// </summary>
 		public ORMKey() { isKey = true; }
 	}
 	/// <summary>
@@ -434,6 +441,9 @@ namespace ORMGen
 	[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
 	public class ORMReadonly : ORMPropertyAttribute
 	{
+		/// <summary>
+		/// Shortly definition of a readonly field of data table, something like this [ORMReadonly]
+		/// </summary>
 		public ORMReadonly() { Readonly = true; }
 	}
 	/// <summary>
@@ -442,6 +452,9 @@ namespace ORMGen
 	[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
 	public class ORMReadonlyKey : ORMPropertyAttribute
 	{
+		/// <summary>
+		/// Shortly definition of a readonly key field of data table, something like this [ORMReadonlyKey]
+		/// </summary>
 		public ORMReadonlyKey() { isKey = true; Readonly = true; }
 	}
 	/// <summary>
@@ -449,7 +462,9 @@ namespace ORMGen
 	/// </summary>
 	public enum ORMRulEnum
 	{
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		Unassigned = 0,
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 		/// <summary>
 		/// Map name to database unchanged
 		/// </summary>
@@ -463,7 +478,9 @@ namespace ORMGen
 		/// </summary>
 		DBRemoveUnderscoresAndCapitalize = 4,
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		__DBMask = 31,
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Map to view Name unchanged
@@ -482,7 +499,9 @@ namespace ORMGen
 		/// </summary>
 		ViewHumanitaize = 256,
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		__ViewMask = 480
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 	/// <summary>
 	/// ORM rule switcher attribute, effect scoped all subsequent within the class attributes until the next switch
@@ -518,7 +537,9 @@ namespace ORMGen
 	/// <summary>
 	/// Enumeration of SQL providers
 	/// </summary>
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 	public enum DBProviderEnum { MSSql, MySQL, OracleSQL, PostgreSQL }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 	internal static class OracleSQLScriptBuilder
 	{
