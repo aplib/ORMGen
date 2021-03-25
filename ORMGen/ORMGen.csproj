@@ -8,7 +8,9 @@
     <Copyright>vadim b.</Copyright>
     <PackageLicenseExpression></PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/aplib/ORMGen</PackageProjectUrl>
-    <Description>.NET Minimal helper library, data mapper (dapper wrapper), metadata types, for metaprogramming, code/script generation</Description>
+    <Description>.NET Minimal helper library, data mapper (dapper wrapper), metadata types, for metaprogramming, code/script generation 
+1. Helper object populated class metadata and specialized custom attributes.
+Can be used for code and script generation.</Description>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <AssemblyVersion>1.0.3.0</AssemblyVersion>
     <FileVersion>1.0.3.0</FileVersion>

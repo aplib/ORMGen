@@ -7,7 +7,7 @@
 
 Features:
 --------
-Helper object populated class metadata and specialized custom attributes.
+1. Helper object populated class metadata and specialized custom attributes.
 Can be used for code and script generation.
 
 Object initialization:
@@ -33,7 +33,7 @@ Something like this:
 
 
 ```
-// for ORM class by defult assigned rules for ato mapping fields:
+// for ORM class by defult assigned rules for auto mapping fields:
 
 [ORMRuleSwitcher(ORMRulEnum.ViewHumanitaize, ORMRulEnum.DBReplaceUnderscoresWithSpaces)]
 
