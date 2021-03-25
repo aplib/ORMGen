@@ -67,4 +67,4 @@ script = $@"update table {orm.TableName} set {orm.Select("Text").ForUpdateSet()}
 conn.Execute(script, data_object);
 ```
 
-you can control the composition of fields using the following methods Select or Reject
+you can control the composition of fields using the following methods: Select or Reject
