@@ -24,7 +24,6 @@ orm.UseRules(ORMRulEnum.ViewHumanitaize | ORMRulEnum.DBReplaceUnderscoresWithSpa
 
 ```
 
-
 Something like this:
 --------
 
