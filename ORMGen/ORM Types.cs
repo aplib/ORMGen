@@ -197,7 +197,58 @@ namespace ORMGen
 		/// </summary>
 		/// <returns>(string) for set part</returns>
 		public static string ForUpdateSet(this ORMTableInfo orm) => string.Join(", ", orm.Props.Where(prop => !prop.isKey && !prop.Readonly).Select(prop => prop.parent.DBFriendly(prop.Field) + "=@" + prop.Name));
+		/// <summary>
+		/// Matchch a field name by the specified rule
+		/// </summary>
+		/// <param name="orm_pi">ORM property info</param>
+		/// <param name="rule">Rule</param>
+		/// <returns>name of field</returns>
+		public static string ByDBRule(this ORMPropertyInfo orm_pi, ORMRulEnum rule) => ByDBRule(orm_pi.Name, rule);
+		/// <summary>
+		/// A title by the specified rule
+		/// </summary>
+		/// <param name="orm_pi">ORM property info</param>
+		/// <param name="rule">Rule</param>
+		/// <returns>Title</returns>
+		public static string ByViewRule(this ORMPropertyInfo orm_pi, ORMRulEnum rule) => ByViewRule(orm_pi.Name, rule);
 
+		public static string ByDBRule(string name, ORMRulEnum rule) => (rule & ORMRulEnum.__DBMask) switch
+		{
+			ORMRulEnum.DBReplaceUnderscoresWithSpaces => name.Replace('_', ' '),
+			ORMRulEnum.DBRemoveUnderscoresAndCapitalize =>
+				name.Split('_')
+				.Where(part => !string.IsNullOrWhiteSpace(part))
+				.Select(part => Char.ToUpper(part[0], CultureInfo.CurrentCulture) + part[1..])
+				.ToString(),
+			_ => name
+		};
+
+		public static string ByViewRule(string name, ORMRulEnum rule) => (rule & ORMRulEnum.__ViewMask) switch
+		{
+			ORMRulEnum.ViewUnderscoresReplaceSpaces => name.Replace('_', ' '),
+			ORMRulEnum.ViewWithUppercase => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.Replace('_', ' ')),
+			ORMRulEnum.ViewHumanitaize => Humanitaize(name),
+			_ => name
+		};
+
+		public static string Humanitaize(this string _name)
+		{
+			var name = _name.Replace('_', ' ');
+			var sb = new StringBuilder(Char.ToUpper(name[0]));
+			for (int i = 1, c = name.Length - 1; i < c; i++)
+			{
+				var _char = name[i];
+				if (Char.IsDigit(_char))
+					sb.Append(_char);
+				else if (i > 0 && i < c && Char.IsUpper(_char) && Char.IsLower(name[i - 1]) && Char.IsLower(name[i + 1]))
+				{ sb.Append(' '); sb.Append(Char.ToLowerInvariant(_char)); }
+				else if (i > 0 && Char.IsLetter(name[i - 1]) && Char.IsDigit(_char))
+				{ sb.Append(' '); sb.Append(_char); }
+				else
+					sb.Append(_char);
+			}
+			return name;
+		}
 	}
 	
 	/// <summary>ORM data mapping generic class derived from base class
@@ -242,8 +293,8 @@ namespace ORMGen
 			}
 
 			// SetRules rules
-			TableName = table_attr.TableName ?? table_type_info.Name.AccordDBRule(current_rules & ORMRulEnum.__DBMask);
-			Title = (table_attr.Title ?? table_type_info.Name).AccordViewRule(current_rules & ORMRulEnum.__ViewMask);
+			TableName = table_attr.TableName ?? ORMHelper.ByDBRule(table_type_info.Name, current_rules);
+			Title = (table_attr.Title ?? ORMHelper.ByViewRule(table_type_info.Name, current_rules);
 			IdProperty = table_attr.IdProperty;
 			TextProperty = table_attr.TextProperty;
 			As = table_attr.As ?? table_type_info.Name;
@@ -270,64 +321,23 @@ namespace ORMGen
 				var orm_prop_attr = prop_info.GetCustomAttribute<ORMPropertyAttribute>();
 				if (orm_prop_attr != null)
 				{
-					orm_pi.Field = orm_prop_attr.Field ?? prop_info.Name.AccordDBRule(current_rules & ORMRulEnum.__DBMask);
+					orm_pi.Field = orm_prop_attr.Field ?? orm_pi.ByDBRule(current_rules & ORMRulEnum.__DBMask);
 					orm_pi.Format = orm_prop_attr.Format;
-					orm_pi.Title = orm_prop_attr.Title ?? prop_info.Name.AccordViewRule(current_rules & ORMRulEnum.__ViewMask);
+					orm_pi.Title = orm_prop_attr.Title ?? orm_pi.ByViewRule(current_rules & ORMRulEnum.__ViewMask);
 					orm_pi.isKey = orm_prop_attr.isKey;
 					orm_pi.Readonly = orm_prop_attr.Readonly;
 					orm_pi.RefType = orm_prop_attr.RefType;
 					orm_pi.Hide = orm_prop_attr.Hide;
 				}
 
-				if (orm_pi.Title == null) orm_pi.Title = orm_pi.Name.AccordViewRule(current_rules & ORMRulEnum.__ViewMask);
-				if (orm_pi.Field == null) orm_pi.Field = orm_pi.Name.AccordDBRule(current_rules & ORMRulEnum.__DBMask);
+				if (orm_pi.Title == null) orm_pi.Title = orm_pi.ByViewRule(current_rules & ORMRulEnum.__ViewMask);
+				if (orm_pi.Field == null) orm_pi.Field = orm_pi.ByDBRule(current_rules & ORMRulEnum.__DBMask);
 
 				all_props_orm_info.Add(orm_pi);
 			}
 			Props = all_props_orm_info.ToArray();
 			Keys = all_props_orm_info.Where(prop => prop.isKey).ToArray();
 			References = all_props_orm_info.Where(prop => prop.RefType != null).ToArray();
-		}
-	}
-
-	internal static class InternalORMHelper
-	{
-		public static string AccordDBRule(this string name, ORMRulEnum rule) => rule switch
-		{
-			ORMRulEnum.DBReplaceUnderscoresWithSpaces => name.Replace('_', ' '),
-			ORMRulEnum.DBRemoveUnderscoresAndCapitalize =>
-				name.Split('_')
-				.Where(part => !string.IsNullOrWhiteSpace(part))
-				.Select(part => Char.ToUpper(part[0], CultureInfo.CurrentCulture) + part[1..])
-				.ToString(),
-			_ => name
-		};
-
-		public static string AccordViewRule(this string name, ORMRulEnum rule) => rule switch
-		{
-			ORMRulEnum.ViewUnderscoresReplaceSpaces => name.Replace('_', ' '),
-			ORMRulEnum.ViewWithUppercase => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.Replace('_', ' ')),
-			ORMRulEnum.ViewHumanitaize => Humanitaize(name),
-			_ => name
-		};
-
-		public static string Humanitaize(this string _name)
-		{
-			var name = _name.Replace('_', ' ');
-			var sb = new StringBuilder(Char.ToUpper(name[0]));
-			for (int i = 1, c = name.Length - 1; i < c; i++)
-			{
-				var _char = name[i];
-				if (Char.IsDigit(_char))
-					sb.Append(_char);
-				else if (i > 0 && i < c && Char.IsUpper(_char) && Char.IsLower(name[i - 1]) && Char.IsLower(name[i + 1]))
-				{ sb.Append(' '); sb.Append(Char.ToLowerInvariant(_char)); }
-				else if (i > 0 && Char.IsLetter(name[i - 1]) && Char.IsDigit(_char))
-				{ sb.Append(' '); sb.Append(_char); }
-				else
-					sb.Append(_char);
-			}
-			return name;
 		}
 	}
 
