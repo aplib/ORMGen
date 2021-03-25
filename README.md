@@ -2,9 +2,6 @@
  .NET Minimal helper library, data mapper (dapper wrapper), metadata types, for metaprogramming, code/script generation.
 
 
- Initialize object
-------------------------------------------------------------
-
 Features:
 --------
 1. Helper object populated class metadata and specialized custom attributes.
