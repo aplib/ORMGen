@@ -294,7 +294,7 @@ namespace ORMGen
 
 			// SetRules rules
 			TableName = table_attr.TableName ?? ORMHelper.ByDBRule(table_type_info.Name, current_rules);
-			Title = (table_attr.Title ?? ORMHelper.ByViewRule(table_type_info.Name, current_rules);
+			Title = table_attr.Title ?? ORMHelper.ByViewRule(table_type_info.Name, current_rules);
 			IdProperty = table_attr.IdProperty;
 			TextProperty = table_attr.TextProperty;
 			As = table_attr.As ?? table_type_info.Name;
