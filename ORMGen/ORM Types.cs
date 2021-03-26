@@ -197,6 +197,8 @@ namespace ORMGen
 		/// </summary>
 		/// <returns>(string) for set part</returns>
 		public static string ForUpdateSet(this ORMTableInfo orm) => string.Join(", ", orm.Props.Where(prop => !prop.isKey && !prop.Readonly).Select(prop => prop.parent.DBFriendly(prop.Field) + "=@" + prop.Name));
+
+
 		/// <summary>
 		/// Matchch a field name by the specified rule
 		/// </summary>
@@ -205,13 +207,18 @@ namespace ORMGen
 		/// <returns>name of field</returns>
 		public static string ByDBRule(this ORMPropertyInfo orm_pi, ORMRulEnum rule) => ByDBRule(orm_pi.Name, rule);
 		/// <summary>
-		/// A title by the specified rule
+		/// Transformation by the specified rule
 		/// </summary>
 		/// <param name="orm_pi">ORM property info</param>
 		/// <param name="rule">Rule</param>
 		/// <returns>Title</returns>
 		public static string ByViewRule(this ORMPropertyInfo orm_pi, ORMRulEnum rule) => ByViewRule(orm_pi.Name, rule);
-
+		/// <summary>
+		/// Matching, external access
+		/// </summary>
+		/// <param name="name">Name</param>
+		/// <param name="rule">Rule</param>
+		/// <returns>Matched name</returns>
 		public static string ByDBRule(string name, ORMRulEnum rule) => (rule & ORMRulEnum.__DBMask) switch
 		{
 			ORMRulEnum.DBReplaceUnderscoresWithSpaces => name.Replace('_', ' '),
@@ -222,7 +229,12 @@ namespace ORMGen
 				.ToString(),
 			_ => name
 		};
-
+		/// <summary>
+		/// Transformation, external access
+		/// </summary>
+		/// <param name="name">Name</param>
+		/// <param name="rule">Rule</param>
+		/// <returns>Transformed name</returns>
 		public static string ByViewRule(string name, ORMRulEnum rule) => (rule & ORMRulEnum.__ViewMask) switch
 		{
 			ORMRulEnum.ViewUnderscoresReplaceSpaces => name.Replace('_', ' '),
@@ -230,7 +242,11 @@ namespace ORMGen
 			ORMRulEnum.ViewHumanitaize => Humanitaize(name),
 			_ => name
 		};
-
+		/// <summary>
+		/// Humanitaize transformation, external access
+		/// </summary>
+		/// <param name="_name">Name</param>
+		/// <returns>Transformed name</returns>
 		public static string Humanitaize(this string _name)
 		{
 			var name = _name.Replace('_', ' ');
