@@ -38,6 +38,10 @@ namespace ORMGen
 		/// </summary>
 		public string TextProperty { get; set; }
 		/// <summary>
+		/// Declare the data table object as read-only and the data will not be modified, use for codegeneration
+		/// </summary>
+		public string Readonly { get; set; }
+		/// <summary>
 		/// List of all properties
 		/// </summary>
 		public ORMPropertyInfo[] Props { get; set; }
@@ -53,10 +57,26 @@ namespace ORMGen
 		string idProperty;
 		string GetIdPropertyName()
 		{
-			if (idProperty == null && Keys.Length != 1)
-				throw new NullReferenceException("Need to set 'IdProperty' ORM attribute value or define one key property");
+			if (idProperty == null)
+			{
+				if (idProperty == null && Keys.Length != 1)
+					throw new NullReferenceException("Need to set 'IdProperty' ORM attribute value or define one key property");
 
-			return idProperty ?? Keys[0].Name;
+				idProperty  = Keys[0].Name;
+			}
+			
+			return idProperty;
+		}
+		/// <summary>
+		/// Exception safe try get IdProperty name
+		/// </summary>
+		/// <returns>IdProperty name or null</returns>
+		public string TryGetIdPropertyName()
+        {
+			if (idProperty == null && Keys.Length == 1)
+				idProperty = Keys[0].Name;
+
+			return idProperty;
 		}
 
 		static DBProviderEnum db_provider = DBProviderEnum.MSSql;
@@ -313,13 +333,14 @@ namespace ORMGen
 			Title = table_attr.Title ?? ORMHelper.ByViewRule(table_type_info.Name, current_rules);
 			IdProperty = table_attr.IdProperty;
 			TextProperty = table_attr.TextProperty;
+			Readonly = table_attr?.Readonly;
 			As = table_attr.As ?? table_type_info.Name;
 			As = Regex.Replace(As.Trim().ToLower(), @"[\W\s_\~\!\@\#\$\%\^\&\*\(\)\[\]]+", "_");
 
 			// For all properties:
 
-			var all_props_orm_info = new List<ORMPropertyInfo>();
 			var props = table_type_info.GetProperties();
+			var all_orm_pi = new List<ORMPropertyInfo>(props.Length);
 
 			foreach (var prop_info in props)
 			{
@@ -349,11 +370,11 @@ namespace ORMGen
 				if (orm_pi.Title == null) orm_pi.Title = orm_pi.ByViewRule(current_rules & ORMRulEnum.__ViewMask);
 				if (orm_pi.Field == null) orm_pi.Field = orm_pi.ByDBRule(current_rules & ORMRulEnum.__DBMask);
 
-				all_props_orm_info.Add(orm_pi);
+				all_orm_pi.Add(orm_pi);
 			}
-			Props = all_props_orm_info.ToArray();
-			Keys = all_props_orm_info.Where(prop => prop.isKey).ToArray();
-			References = all_props_orm_info.Where(prop => prop.RefType != null).ToArray();
+			Props = all_orm_pi.ToArray();
+			Keys = all_orm_pi.Where(prop => prop.isKey).ToArray();
+			References = all_orm_pi.Where(prop => prop.RefType != null).ToArray();
 		}
 	}
 
@@ -378,11 +399,15 @@ namespace ORMGen
 		/// <summary>
 		/// Use IdProperty for codogeneration
 		/// </summary>
-		public string IdProperty { get; set; }
+		public string IdProperty { get; init; }
 		/// <summary>
 		/// Use TextProperty for codogeneration
 		/// </summary>
-		public string TextProperty { get; set; }
+		public string TextProperty { get; init; }
+		/// <summary>
+		/// Declare the data table object as read-only and the data will not be modified, use for codegeneration
+		/// </summary>
+		public string Readonly { get; init; }
 	}
 
 	/// <summary>
@@ -580,22 +605,22 @@ namespace ORMGen
 	public enum DBProviderEnum { MSSql, MySQL, OracleSQL, PostgreSQL }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
-	internal static class OracleSQLScriptBuilder
+	internal static partial class OracleSQLScriptBuilder
 	{
 		public static string DBFriendly(string name) => name.StartsWith('"') ? name : ('"' + name + '"');
 	}
 
-	internal static class MSSQLScriptBuilder
+	internal static partial class MSSQLScriptBuilder
 	{
 		public static string DBFriendly(string name) => name.StartsWith('[') ? name : ("[" + name + "]");
 	}
 
-	internal static class PostgreSQLScriptBuilder
+	internal static partial class PostgreSQLScriptBuilder
 	{
 		public static string DBFriendly(string name) =>name.StartsWith('"') ? name : ('"' + name + '"');
 	}
 
-	internal static class MySQLScriptBuilder
+	internal static partial class MySQLScriptBuilder
 	{
 		public static string DBFriendly(string name) => name.StartsWith('"') ? name : ('`' + name + '`');
 	}
