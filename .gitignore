@@ -1,4 +1,5 @@
 *.rar
+*.bat
 .vs/
 bin/
 obj/

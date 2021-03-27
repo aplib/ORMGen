@@ -38,6 +38,11 @@
             Text property that give a representation of the object
             </summary>
         </member>
+        <member name="P:ORMGen.ORMTableInfo.Readonly">
+            <summary>
+            Declare the data table object as read-only and the data will not be modified, use for codegeneration
+            </summary>
+        </member>
         <member name="P:ORMGen.ORMTableInfo.Props">
             <summary>
             List of all properties
@@ -52,6 +57,12 @@
             <summary>
             List of reference properties
             </summary>
+        </member>
+        <member name="M:ORMGen.ORMTableInfo.TryGetIdPropertyName">
+            <summary>
+            Exception safe try get IdProperty name
+            </summary>
+            <returns>IdProperty name or null</returns>
         </member>
         <member name="P:ORMGen.ORMTableInfo.DBProvider">
             <summary>
@@ -157,6 +168,45 @@
             </summary>
             <returns>(string) for set part</returns>
         </member>
+        <member name="M:ORMGen.ORMHelper.ByDBRule(ORMGen.ORMPropertyInfo,ORMGen.ORMRulEnum)">
+            <summary>
+            Matchch a field name by the specified rule
+            </summary>
+            <param name="orm_pi">ORM property info</param>
+            <param name="rule">Rule</param>
+            <returns>name of field</returns>
+        </member>
+        <member name="M:ORMGen.ORMHelper.ByViewRule(ORMGen.ORMPropertyInfo,ORMGen.ORMRulEnum)">
+            <summary>
+            Transformation by the specified rule
+            </summary>
+            <param name="orm_pi">ORM property info</param>
+            <param name="rule">Rule</param>
+            <returns>Title</returns>
+        </member>
+        <member name="M:ORMGen.ORMHelper.ByDBRule(System.String,ORMGen.ORMRulEnum)">
+            <summary>
+            Matching, external access
+            </summary>
+            <param name="name">Name</param>
+            <param name="rule">Rule</param>
+            <returns>Matched name</returns>
+        </member>
+        <member name="M:ORMGen.ORMHelper.ByViewRule(System.String,ORMGen.ORMRulEnum)">
+            <summary>
+            Transformation, external access
+            </summary>
+            <param name="name">Name</param>
+            <param name="rule">Rule</param>
+            <returns>Transformed name</returns>
+        </member>
+        <member name="M:ORMGen.ORMHelper.Humanitaize(System.String)">
+            <summary>
+            Humanitaize transformation, external access
+            </summary>
+            <param name="_name">Name</param>
+            <returns>Transformed name</returns>
+        </member>
         <member name="T:ORMGen.ORMTableInfo`1">
             <summary>ORM data mapping generic class derived from base class
             filled with metadata when created>
@@ -200,6 +250,11 @@
         <member name="P:ORMGen.ORMTableAttribute.TextProperty">
             <summary>
             Use TextProperty for codogeneration
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMTableAttribute.Readonly">
+            <summary>
+            Declare the data table object as read-only and the data will not be modified, use for codegeneration
             </summary>
         </member>
         <member name="T:ORMGen.ORMPropertyInfo">
