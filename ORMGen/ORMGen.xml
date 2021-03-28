@@ -16,6 +16,21 @@
             <param name="type">Type type</param>
             <returns>True if type is Nullable&lt;&gt;</returns>
         </member>
+        <member name="M:ORMGen.Builders.CSHelper.Blank(System.String)">
+            <summary>
+            Indicates whether a specified string is null, empty, or consists only of white-space characters.
+            calls string.IsNullOrWhiteSpace()
+            </summary>
+            <param name="str">The string to test.</param>
+            <returns>reault of string.IsNullOrWhiteSpace()</returns>
+        </member>
+        <member name="M:ORMGen.Builders.CSHelper.notBlank(System.String)">
+            <summary>
+            Indicates whether a specified string is not null and contains not white-space characters.
+            </summary>
+            <param name="str"></param>
+            <returns></returns>
+        </member>
         <member name="M:ORMGen.Builders.CSHelper.CSTypeSyntax(System.Type)">
             <summary>
             Get type name C# syntax
