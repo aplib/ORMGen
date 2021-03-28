@@ -38,8 +38,27 @@
             <param name="type">Type</param>
             <returns>String Type name</returns>
         </member>
+        <member name="F:ORMGen.Builders.ORMBuilder.ToValidNameRegex">
+            <summary>
+            Regex for convert name to valid CS name
+            </summary>
+        </member>
+        <member name="M:ORMGen.Builders.ORMBuilder.GenORMTableTypeCode(ORMGen.ORMTableInfo,System.String,ORMGen.Builders.ORMBuilder.GenerateTypeNameEnum)">
+            <summary>
+            Build ORMTable data model source code
+            </summary>
+            <param name="orm">ORMTableInfo data model</param>
+            <param name="otput_name">Name for generate code</param>
+            <param name="output_type">Typ of output structure</param>
+            <returns></returns>
+        </member>
+        <member name="T:ORMGen.Builders.ORMBuilder.GenerateTypeNameEnum">
+            <summary>
+            Output model type
+            </summary>
+        </member>
         <member name="T:ORMGen.ORMTableInfo">
-            <summary>ORM data mapping base class
+            <summary>ORMTableInfo data model base class
             </summary>
         </member>
         <member name="F:ORMGen.ORMTableInfo.Type">

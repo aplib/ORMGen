@@ -5,13 +5,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using ORMGen.Builders;
 
 namespace ORMGen
 {
-    /// <summary>ORM data mapping base class
-    /// </summary>
-    public class ORMTableInfo
+	/// <summary>ORMTableInfo data model base class
+	/// </summary>
+	public class ORMTableInfo
 	{
 		/// <summary>
 		/// Access to object type

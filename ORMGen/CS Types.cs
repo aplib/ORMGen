@@ -85,9 +85,91 @@ namespace ORMGen.Builders
         }
     }
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public static class ORMBuilder
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     {
- 
+        /// <summary>
+        /// Regex for convert name to valid CS name
+        /// </summary>
+        public static readonly Regex ToValidNameRegex = new Regex(@"[\W\s_\~\!\@\#\$\%\^\&\*\(\)\[\]]+");
+        /// <summary>
+        /// Build ORMTable data model source code
+        /// </summary>
+        /// <param name="orm">ORMTableInfo data model</param>
+        /// <param name="otput_name">Name for generate code</param>
+        /// <param name="output_type">Typ of output structure</param>
+        /// <returns></returns>
+        public static string GenORMTableTypeCode(this ORMTableInfo orm, string otput_name = null, GenerateTypeNameEnum output_type = GenerateTypeNameEnum.Class)
+        {
+            var sb = new StringBuilder();
+
+            var table_name = orm.TableName.Trim(' ', '[', ']', '"', '`');
+            var generate_name = otput_name ?? orm.Type?.Name ?? ToValidNameRegex.Replace(table_name, "_");
+            if (generate_name.Blank())
+                throw new ArgumentException("Unassigned or invalid model name");
+            generate_name = ToValidNameRegex.Replace(generate_name, "_");
+            var generate_type = Enum.GetName(output_type).ToLower();
+
+            // Append attributes
+
+            ORMRulEnum current_rules = orm.Rules;
+            sb.AppendLine($"[ORMRuleSwitcher(ORMRulEnum.{Enum.GetName(current_rules & ORMRulEnum.__ViewMask) ?? "ViewHumanitaize"}, ORMRulEnum.{Enum.GetName(current_rules & ORMRulEnum.__DBMask) ?? "DBReplaceUnderscoresWithSpaces"})]");
+
+            var values = new List<string>(5);
+
+            if (ORMHelper.ByViewRule(generate_name, current_rules) != orm.Title)
+                values.Add("Title = \"" + orm.Title + "\"");
+
+            if (generate_name != table_name)
+                values.Add("TableName = \"" + table_name + "\"");
+
+            if (orm.As.notBlank()) values.Add("As = \"" + orm.As + "\"");
+            if (orm.IdProperty.notBlank()) values.Add("IdProperty = \"" + orm.IdProperty + "\"");
+            if (orm.TextProperty.notBlank()) values.Add("TextProperty = \"" + orm.TextProperty + "\"");
+            if (orm.Readonly) values.Add("Readonly = true");
+
+            if (values.Count == 0)
+                sb.AppendLine("[ORMTable]");
+            else
+                sb.AppendLine($@"[ORMTable({string.Join(", ", values)})]");
+
+            sb.AppendLine($"public partial {generate_type} {generate_name} //::generated");
+            sb.AppendLine("{");
+            foreach (var orm_pi in orm.Props)
+            {
+                values.Clear();
+
+                var for_title = ORMHelper.ByViewRule(orm_pi.Name, current_rules);
+                if (for_title != orm_pi.Name || orm_pi.Title != orm_pi.Name)
+                    values.Add($@"Title = ""{orm_pi.Title ?? for_title}""");
+
+                var for_field = ORMHelper.ByDBRule(orm_pi.Name, current_rules);
+                if (for_field != orm_pi.Name || orm_pi.Field != orm_pi.Name)
+                    values.Add($@"Field = ""{orm_pi.Field ?? for_field}""");
+
+                if (orm_pi.isKey) values.Add($@"isKey = true");
+                if (orm_pi.Readonly) values.Add($@"Readonly = true");
+                if (orm_pi.Hide) values.Add($@"Hide = true");
+                if (orm_pi.RefType != null) values.Add($@"RefType = typeof({orm_pi.RefType.CSTypeSyntax()})");
+
+                if (values.Count > 0)
+                    sb.AppendLine($"    [ORMProperty({string.Join(", ", values)})]");
+
+                sb.AppendLine($"    public {orm_pi.Type.CSTypeSyntax()} {orm_pi.Name}" + " { get; set; }");
+            }
+            sb.AppendLine("}");
+
+            return sb.ToString();
+        }
+        /// <summary>
+        /// Output model type
+        /// </summary>
+        public enum GenerateTypeNameEnum
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+        { Class, Struct, Record }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+
     }
 }
 
