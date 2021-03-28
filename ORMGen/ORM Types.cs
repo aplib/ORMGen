@@ -602,7 +602,9 @@ namespace ORMGen
 	/// <summary>
 	/// Enumeration of SQL providers
 	/// </summary>
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 	public enum DBProviderEnum { MSSql, MySQL, OracleSQL, PostgreSQL }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 	internal static partial class OracleSQLScriptBuilder
 	{
