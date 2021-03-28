@@ -45,7 +45,7 @@ public class SomeClass
     public string Text { get; set; }
 }
 
-// select
+// select (using Dapper)
 
 var script = $@"select {orm.ForSelectFields()} from {orm.TableName}";
 var enum_objects = conn.Query<SomeClass>(script);
