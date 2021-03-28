@@ -15,7 +15,19 @@ namespace ORMGen.Builders
 		/// <param name="type">Type type</param>
 		/// <returns>True if type is Nullable&lt;&gt;</returns>
 		public static bool isNullable(this Type type) => Nullable.GetUnderlyingType(type) != null;
-
+        /// <summary>
+        /// Indicates whether a specified string is null, empty, or consists only of white-space characters.
+        /// calls string.IsNullOrWhiteSpace()
+        /// </summary>
+        /// <param name="str">The string to test.</param>
+        /// <returns>reault of string.IsNullOrWhiteSpace()</returns>
+        public static bool Blank(this string str) => str == null || string.IsNullOrWhiteSpace(str);
+        /// <summary>
+        /// Indicates whether a specified string is not null and contains not white-space characters.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static bool notBlank(this string str) => str != null && !string.IsNullOrWhiteSpace(str);
 
         static Dictionary<Type, string> type_names = new()
         {
