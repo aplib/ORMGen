@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ORMGen.Builders
 {
@@ -71,7 +73,7 @@ namespace ORMGen.Builders
         /// </summary>
         /// <param name="type">Type</param>
         /// <returns>String Type name</returns>
-        static string CSTypeSyntax(this Type type)
+        public static string CSTypeSyntax(this Type type)
         {
             if (type_names.TryGetValue(type, out var name))
                 return name;
@@ -83,5 +85,9 @@ namespace ORMGen.Builders
         }
     }
 
+    public static class ORMBuilder
+    {
+ 
+    }
 }
 

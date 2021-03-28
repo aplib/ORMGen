@@ -41,7 +41,7 @@ namespace ORMGen
 		/// <summary>
 		/// Declare the data table object as read-only and the data will not be modified, use for codegeneration
 		/// </summary>
-		public string Readonly { get; set; }
+		public bool Readonly { get; set; }
 		/// <summary>
 		/// List of all properties
 		/// </summary>
@@ -334,7 +334,7 @@ namespace ORMGen
 			Title = table_attr.Title ?? ORMHelper.ByViewRule(table_type_info.Name, current_rules);
 			IdProperty = table_attr.IdProperty;
 			TextProperty = table_attr.TextProperty;
-			Readonly = table_attr?.Readonly;
+			Readonly = table_attr.Readonly;
 			As = table_attr.As ?? table_type_info.Name;
 			As = Regex.Replace(As.Trim().ToLower(), @"[\W\s_\~\!\@\#\$\%\^\&\*\(\)\[\]]+", "_");
 
@@ -408,7 +408,7 @@ namespace ORMGen
 		/// <summary>
 		/// Declare the data table object as read-only and the data will not be modified, use for codegeneration
 		/// </summary>
-		public string Readonly { get; init; }
+		public bool Readonly { get; init; }
 	}
 
 	/// <summary>
