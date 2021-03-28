@@ -4,6 +4,25 @@
         <name>ORMGen</name>
     </assembly>
     <members>
+        <member name="T:ORMGen.Builders.CSHelper">
+            <summary>
+            Common C# type extension
+            </summary>
+        </member>
+        <member name="M:ORMGen.Builders.CSHelper.isNullable(System.Type)">
+            <summary>
+            Check if type is nullable
+            </summary>
+            <param name="type">Type type</param>
+            <returns>True if type is Nullable&lt;&gt;</returns>
+        </member>
+        <member name="M:ORMGen.Builders.CSHelper.CSTypeSyntax(System.Type)">
+            <summary>
+            Get type name C# syntax
+            </summary>
+            <param name="type">Type</param>
+            <returns>String Type name</returns>
+        </member>
         <member name="T:ORMGen.ORMTableInfo">
             <summary>ORM data mapping base class
             </summary>

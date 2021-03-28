@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using ORMGen.Builders;
 
 namespace ORMGen
 {
@@ -138,7 +139,7 @@ namespace ORMGen
 	}
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-	public static class ORMHelper
+	public static partial class ORMHelper
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	{
 		/// <summary>
@@ -150,7 +151,7 @@ namespace ORMGen
 		public static IEnumerable<ORMPropertyInfo> Reject(this ORMTableInfo orm, string filter)
 		{
 			var parts = filter.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-			return orm.Props.Where(orm_pi => !parts.Contains(orm_pi.Name));
+			return orm.Props.Where(orm_pi => Array.IndexOf<string>(parts, orm_pi.Name) < 0);
 		}
 		/// <summary>
 		/// Properties except those specified
@@ -161,7 +162,7 @@ namespace ORMGen
 		public static IEnumerable<ORMPropertyInfo> Reject(this IEnumerable<ORMPropertyInfo> props, string filter)
 		{
 			var parts = filter.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-			return props.Where(orm_pi => !parts.Contains(orm_pi.Name));
+			return props.Where(orm_pi => Array.IndexOf<string>(parts, orm_pi.Name) < 0);
 		}
 		/// <summary>
 		/// Select of specific properties
@@ -172,7 +173,7 @@ namespace ORMGen
 		public static IEnumerable<ORMPropertyInfo> Select(this ORMTableInfo orm, string filter)
 		{
 			var parts = filter.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-			return orm.Props.Where(orm_pi => parts.Contains(orm_pi.Name));
+			return orm.Props.Where(orm_pi => Array.IndexOf<string>(parts, orm_pi.Name) >= 0);
 		}
 
 
@@ -180,43 +181,43 @@ namespace ORMGen
 		/// Formatting a list of mapped properties/fields for select script (fields part)
 		/// </summary>
 		/// <returns>Fields part of select script</returns>
-		public static string ForSelect(this IEnumerable<ORMPropertyInfo> props) => string.Join(",", props.Select(prop => prop.parent.DBFriendly(prop.Field) + " as " + prop.Name));
+		public static string ForSelect(this IEnumerable<ORMPropertyInfo> props) => string.Join(",", props.Select(orm_pi => orm_pi.parent.DBFriendly(orm_pi.Field) + " as " + orm_pi.Name));
 		/// <summary>
 		/// Formatting a list of mapped properties passed from an object for select script condition (where part)
 		/// </summary>
 		/// <returns>(string) condition for where part</returns>
-		public static string ForSelectConditionKeys(this IEnumerable<ORMPropertyInfo> props) => string.Join(" and ", props.Select(prop => prop.parent.DBFriendly(prop.Field) + "=@" + prop.Name));
+		public static string ForSelectConditionKeys(this IEnumerable<ORMPropertyInfo> props) => string.Join(" and ", props.Select(orm_pi => orm_pi.parent.DBFriendly(orm_pi.Field) + "=@" + orm_pi.Name));
 		/// <summary>
 		/// Formatting a list of mapped properties passed from an object for insert script (values part)
 		/// </summary>
 		/// <returns>(string) for values part</returns>
-		public static string ForInsertValues(this IEnumerable<ORMPropertyInfo> props) => string.Join(",", props.Select(prop => "@" + prop.Name));
+		public static string ForInsertValues(this IEnumerable<ORMPropertyInfo> props) => string.Join(",", props.Select(orm_pi => "@" + orm_pi.Name));
 		/// <summary>
 		/// Formatting a list of values passed from an object for update script (set part)
 		/// </summary>
 		/// <returns>(string) for set part</returns>
-		public static string ForUpdateSet(this IEnumerable<ORMPropertyInfo> props) => string.Join(", ", props.Where(prop => !prop.isKey && !prop.Readonly).Select(prop => prop.parent.DBFriendly(prop.Field) + "=@" + prop.Name));
+		public static string ForUpdateSet(this IEnumerable<ORMPropertyInfo> props) => string.Join(", ", props.Where(orm_pi => !orm_pi.isKey && !orm_pi.Readonly).Select(prop => prop.parent.DBFriendly(prop.Field) + "=@" + prop.Name));
 
 		/// <summary>
 		/// Formatting a full properties list of mapped properties passed from an object for select script condition (where part)
 		/// </summary>
 		/// <returns>(string) condition for where part</returns>
-		public static string ForSelectFields(this ORMTableInfo orm) => string.Join(",", orm.Props.Select(prop => orm.DBFriendly(prop.Field) + " as " + prop.Name));
+		public static string ForSelectFields(this ORMTableInfo orm) => string.Join(",", orm.Props.Select(orm_pi => orm.DBFriendly(orm_pi.Field) + " as " + orm_pi.Name));
 		/// <summary>
 		/// Formatting a key properties list for select script condition (where part)
 		/// </summary>
 		/// <returns>(string) condition for where part</returns>
-		public static string ForSelectConditionKeys(this ORMTableInfo orm) => string.Join(" and ", orm.Keys.Select(prop => orm.DBFriendly(prop.Field) + "=@" + prop.Name));
+		public static string ForSelectConditionKeys(this ORMTableInfo orm) => string.Join(" and ", orm.Keys.Select(orm_pi => orm.DBFriendly(orm_pi.Field) + "=@" + orm_pi.Name));
 		/// <summary>
 		/// Formatting a full list of mapped properties passed from an object for insert script (values part)
 		/// </summary>
 		/// <returns>(string) for values part</returns>
-		public static string ForInsertValues(this ORMTableInfo orm) => string.Join(",", orm.Props.Select(prop => "@" + prop.Name));
+		public static string ForInsertValues(this ORMTableInfo orm) => string.Join(",", orm.Props.Select(orm_pi => "@" + orm_pi.Name));
 		/// <summary>
 		/// Formatting a full list of values passed from an object for update script (set part)
 		/// </summary>
 		/// <returns>(string) for set part</returns>
-		public static string ForUpdateSet(this ORMTableInfo orm) => string.Join(", ", orm.Props.Where(prop => !prop.isKey && !prop.Readonly).Select(prop => prop.parent.DBFriendly(prop.Field) + "=@" + prop.Name));
+		public static string ForUpdateSet(this ORMTableInfo orm) => string.Join(", ", orm.Props.Where(orm_pi => !orm_pi.isKey && !orm_pi.Readonly).Select(prop => prop.parent.DBFriendly(prop.Field) + "=@" + prop.Name));
 
 
 		/// <summary>
@@ -601,9 +602,7 @@ namespace ORMGen
 	/// <summary>
 	/// Enumeration of SQL providers
 	/// </summary>
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 	public enum DBProviderEnum { MSSql, MySQL, OracleSQL, PostgreSQL }
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 	internal static partial class OracleSQLScriptBuilder
 	{
