@@ -328,7 +328,6 @@ namespace ORMGen
 				SetRules(rule_attr, ORMRulEnum.__ViewMask);
 			}
 
-			// SetRules rules
 			TableName = table_attr.TableName ?? ORMHelper.ByDBRule(table_type_info.Name, current_rules);
 			Title = table_attr.Title ?? ORMHelper.ByViewRule(table_type_info.Name, current_rules);
 			IdProperty = table_attr.IdProperty;
