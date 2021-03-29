@@ -180,12 +180,12 @@ namespace ORMGen
 		/// Formatting a list of mapped properties/fields for select script (fields part)
 		/// </summary>
 		/// <returns>Fields part of select script</returns>
-		public static string ForSelect(this IEnumerable<ORMPropertyInfo> props) => string.Join(",", props.Select(orm_pi => orm_pi.parent.DBFriendly(orm_pi.Field) + " as " + orm_pi.Name));
+		public static string ForSelect(this IEnumerable<ORMPropertyInfo> props) => string.Join(",", props.Select(orm_pi => orm_pi.Parent.DBFriendly(orm_pi.Field) + " as " + orm_pi.Name));
 		/// <summary>
 		/// Formatting a list of mapped properties passed from an object for select script condition (where part)
 		/// </summary>
 		/// <returns>(string) condition for where part</returns>
-		public static string ForSelectConditionKeys(this IEnumerable<ORMPropertyInfo> props) => string.Join(" and ", props.Select(orm_pi => orm_pi.parent.DBFriendly(orm_pi.Field) + "=@" + orm_pi.Name));
+		public static string ForSelectConditionKeys(this IEnumerable<ORMPropertyInfo> props) => string.Join(" and ", props.Select(orm_pi => orm_pi.Parent.DBFriendly(orm_pi.Field) + "=@" + orm_pi.Name));
 		/// <summary>
 		/// Formatting a list of mapped properties passed from an object for insert script (values part)
 		/// </summary>
@@ -195,7 +195,7 @@ namespace ORMGen
 		/// Formatting a list of values passed from an object for update script (set part)
 		/// </summary>
 		/// <returns>(string) for set part</returns>
-		public static string ForUpdateSet(this IEnumerable<ORMPropertyInfo> props) => string.Join(", ", props.Where(orm_pi => !orm_pi.isKey && !orm_pi.Readonly).Select(prop => prop.parent.DBFriendly(prop.Field) + "=@" + prop.Name));
+		public static string ForUpdateSet(this IEnumerable<ORMPropertyInfo> props) => string.Join(", ", props.Where(orm_pi => !orm_pi.isKey && !orm_pi.Readonly).Select(prop => prop.Parent.DBFriendly(prop.Field) + "=@" + prop.Name));
 
 		/// <summary>
 		/// Formatting a full properties list of mapped properties passed from an object for select script condition (where part)
@@ -216,7 +216,7 @@ namespace ORMGen
 		/// Formatting a full list of values passed from an object for update script (set part)
 		/// </summary>
 		/// <returns>(string) for set part</returns>
-		public static string ForUpdateSet(this ORMTableInfo orm) => string.Join(", ", orm.Props.Where(orm_pi => !orm_pi.isKey && !orm_pi.Readonly).Select(prop => prop.parent.DBFriendly(prop.Field) + "=@" + prop.Name));
+		public static string ForUpdateSet(this ORMTableInfo orm) => string.Join(", ", orm.Props.Where(orm_pi => !orm_pi.isKey && !orm_pi.Readonly).Select(prop => prop.Parent.DBFriendly(prop.Field) + "=@" + prop.Name));
 
 
 		/// <summary>
@@ -351,7 +351,7 @@ namespace ORMGen
 				}
 
 				// create ORMPropertyInfo
-				var orm_pi = new ORMPropertyInfo() { parent = this, Type = prop_info.PropertyType, Name = prop_info.Name };
+				var orm_pi = new ORMPropertyInfo() { Parent = this, Type = prop_info.PropertyType, Name = prop_info.Name };
 
 				// apply property attributes
 				var orm_prop_attr = prop_info.GetCustomAttribute<ORMPropertyAttribute>();
@@ -414,7 +414,10 @@ namespace ORMGen
 	/// </summary>
 	public class ORMPropertyInfo
 	{
-		internal ORMTableInfo parent;
+		/// <summary>
+		/// ORMTable parent of property
+		/// </summary>
+		public ORMTableInfo Parent;
 		/// <summary>
 		/// Type of value, use Type for codogeneration
 		/// </summary>
@@ -451,6 +454,17 @@ namespace ORMGen
 		/// Not displayed property, for codogeneration
 		/// </summary>
 		public bool Hide { get; internal set; }
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public ORMPropertyInfo() { }
+		/// <summary>
+		/// constructor with parameters
+		/// </summary>
+		/// <param name="parent">ORMTable parent for property</param>
+		/// <param name="name"></param>
+		/// <param name="value_type">Type of value</param>
+		public ORMPropertyInfo(ORMTableInfo parent, string name, Type value_type) { }
 	}
 	/// <summary>
 	/// Object contains data mapping and other metadata.

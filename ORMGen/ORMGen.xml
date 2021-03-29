@@ -315,6 +315,11 @@
             Represent property attributes. Object filled with metadata describing the data table property and its mapping.
             </summary>
         </member>
+        <member name="F:ORMGen.ORMPropertyInfo.Parent">
+            <summary>
+            ORMTable parent of property
+            </summary>
+        </member>
         <member name="P:ORMGen.ORMPropertyInfo.Type">
             <summary>
             Type of value, use Type for codogeneration
@@ -359,6 +364,19 @@
             <summary>
             Not displayed property, for codogeneration
             </summary>
+        </member>
+        <member name="M:ORMGen.ORMPropertyInfo.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="M:ORMGen.ORMPropertyInfo.#ctor(ORMGen.ORMTableInfo,System.String,System.Type)">
+            <summary>
+            constructor with parameters
+            </summary>
+            <param name="parent">ORMTable parent for property</param>
+            <param name="name"></param>
+            <param name="value_type">Type of value</param>
         </member>
         <member name="T:ORMGen.ORMPropertyAttribute">
             <summary>
