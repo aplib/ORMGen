@@ -464,7 +464,12 @@ namespace ORMGen
 		/// <param name="parent">ORMTable parent for property</param>
 		/// <param name="name"></param>
 		/// <param name="value_type">Type of value</param>
-		public ORMPropertyInfo(ORMTableInfo parent, string name, Type value_type) { }
+		public ORMPropertyInfo(ORMTableInfo parent, string name, Type value_type)
+		{
+			Parent = parent;
+			Name = name;
+			Type = Type;
+		}
 	}
 	/// <summary>
 	/// Object contains data mapping and other metadata.
