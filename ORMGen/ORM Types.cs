@@ -59,10 +59,10 @@ namespace ORMGen
 		{
 			if (idProperty == null)
 			{
-				if (idProperty == null && Keys.Length != 1)
-					throw new NullReferenceException("Need to set 'IdProperty' ORM attribute value or define one key property");
+				//if (idProperty == null && Keys?.Length != 1)
+				//	throw new NullReferenceException("Need to set 'IdProperty' ORM attribute value or define one key property");
 
-				idProperty  = Keys[0].Name;
+				idProperty  = Keys?[0].Name;
 			}
 			
 			return idProperty;

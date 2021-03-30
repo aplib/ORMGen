@@ -97,23 +97,24 @@ namespace ORMGen.Builders
         /// Build ORMTable data model source code
         /// </summary>
         /// <param name="orm">ORMTableInfo data model</param>
-        /// <param name="otput_name">Name for generate code</param>
+        /// <param name="table_name">Name for generate code</param>
         /// <param name="output_type">Typ of output structure</param>
         /// <returns></returns>
-        public static string GenORMTableTypeCode(this ORMTableInfo orm, string otput_name = null, GenerateTypeNameEnum output_type = GenerateTypeNameEnum.Class)
+        public static string GenORMTableTypeCode(this ORMTableInfo orm, string table_name, GenerateTypeNameEnum output_type = GenerateTypeNameEnum.Class)
         {
+            ORMRulEnum current_rules = orm.Rules;
+
             var sb = new StringBuilder();
 
-            var table_name = orm.TableName.Trim(' ', '[', ']', '"', '`');
-            var generate_name = otput_name ?? orm.Type?.Name ?? ToValidNameRegex.Replace(table_name, "_");
+            var for_table_name = table_name.Trim(' ', '[', ']', '"', '`');
+            var generate_name = ToValidNameRegex.Replace(for_table_name, "_");
             if (generate_name.Blank())
-                throw new ArgumentException("Unassigned or invalid model name");
+                throw new ArgumentException("Unassigned or invalid table name");
             generate_name = ToValidNameRegex.Replace(generate_name, "_");
             var generate_type = Enum.GetName(output_type).ToLower();
 
             // Append attributes
 
-            ORMRulEnum current_rules = orm.Rules;
             sb.AppendLine($"[ORMRuleSwitcher(ORMRulEnum.{Enum.GetName(current_rules & ORMRulEnum.__ViewMask) ?? "ViewHumanitaize"}, ORMRulEnum.{Enum.GetName(current_rules & ORMRulEnum.__DBMask) ?? "DBReplaceUnderscoresWithSpaces"})]");
 
             var values = new List<string>(5);
@@ -121,8 +122,8 @@ namespace ORMGen.Builders
             if (ORMHelper.ByViewRule(generate_name, current_rules) != orm.Title)
                 values.Add("Title = \"" + orm.Title + "\"");
 
-            if (generate_name != table_name)
-                values.Add("TableName = \"" + table_name + "\"");
+            if (table_name != ORMHelper.ByDBRule(generate_name, current_rules))
+                values.Add((string)("TableName = \"" + table_name + "\""));
 
             if (orm.As.notBlank()) values.Add("As = \"" + orm.As + "\"");
             if (orm.IdProperty.notBlank()) values.Add("IdProperty = \"" + orm.IdProperty + "\"");
