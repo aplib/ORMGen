@@ -43,6 +43,15 @@
             Regex for convert name to valid CS name
             </summary>
         </member>
+        <member name="M:ORMGen.Builders.ORMBuilder.ORMFromDynamicQueryResult(System.Collections.Generic.IEnumerable{System.Object},System.String,System.String)">
+            <summary>
+            Build ORMTableInfo class instance from dynamic query result with default provider binding
+            </summary>
+            <param name="query_result">IEnumerable&lt;dynamic&gt;dapper query result</param>
+            <param name="table_name">Table name</param>
+            <param name="As">as short name</param>
+            <returns>ORMTableInfo</returns>
+        </member>
         <member name="M:ORMGen.Builders.ORMBuilder.GenORMTableTypeCode(ORMGen.ORMTableInfo,System.String,ORMGen.Builders.ORMBuilder.GenerateTypeNameEnum)">
             <summary>
             Build ORMTable data model source code
@@ -59,6 +68,11 @@
         </member>
         <member name="T:ORMGen.ORMTableInfo">
             <summary>ORMTableInfo data model base class
+            </summary>
+        </member>
+        <member name="P:ORMGen.ORMTableInfo.Name">
+            <summary>
+            Type name or name for genegation type
             </summary>
         </member>
         <member name="F:ORMGen.ORMTableInfo.Type">
@@ -111,7 +125,7 @@
             List of reference properties
             </summary>
         </member>
-        <member name="M:ORMGen.ORMTableInfo.TryGetIdPropertyName">
+        <member name="M:ORMGen.ORMTableInfo.TryGetIdPropertyName(System.String@)">
             <summary>
             Exception safe try get IdProperty name
             </summary>
@@ -220,22 +234,6 @@
             Formatting a full list of values passed from an object for update script (set part)
             </summary>
             <returns>(string) for set part</returns>
-        </member>
-        <member name="M:ORMGen.ORMHelper.ByDBRule(ORMGen.ORMPropertyInfo,ORMGen.ORMRulEnum)">
-            <summary>
-            Matchch a field name by the specified rule
-            </summary>
-            <param name="orm_pi">ORM property info</param>
-            <param name="rule">Rule</param>
-            <returns>name of field</returns>
-        </member>
-        <member name="M:ORMGen.ORMHelper.ByViewRule(ORMGen.ORMPropertyInfo,ORMGen.ORMRulEnum)">
-            <summary>
-            Transformation by the specified rule
-            </summary>
-            <param name="orm_pi">ORM property info</param>
-            <param name="rule">Rule</param>
-            <returns>Title</returns>
         </member>
         <member name="M:ORMGen.ORMHelper.ByDBRule(System.String,ORMGen.ORMRulEnum)">
             <summary>

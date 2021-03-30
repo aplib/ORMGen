@@ -13,6 +13,10 @@ namespace ORMGen
 	public class ORMTableInfo
 	{
 		/// <summary>
+		/// Type name or name for genegation type
+		/// </summary>
+		public string Name { get; set; }
+		/// <summary>
 		/// Access to object type
 		/// </summary>
 		public Type Type;
@@ -32,7 +36,7 @@ namespace ORMGen
 		/// <summary>
 		/// The row identification of the database table, can be a key, composite key, hash property. If not specified using a class attribute, then a single key is selected. Otherwise, an exception is thrown.
 		/// </summary>
-		public string IdProperty { get => GetIdPropertyName(); set { idProperty = value; } }
+		public string IdProperty { get => GetIdPropertyName(); set { id_roperty = value; } }
 		/// <summary>
 		/// Text property that give a representation of the object
 		/// </summary>
@@ -54,29 +58,38 @@ namespace ORMGen
 		/// </summary>
 		public ORMPropertyInfo[] References { get; set; }
 
-		string idProperty;
+		string id_roperty;
 		string GetIdPropertyName()
 		{
-			if (idProperty == null)
+			if (id_roperty == null)
 			{
-				//if (idProperty == null && Keys?.Length != 1)
-				//	throw new NullReferenceException("Need to set 'IdProperty' ORM attribute value or define one key property");
+				if (id_roperty == null)
+				{
+					if (Keys == null || Keys.Length != 1)
+						throw new NullReferenceException("Need to set 'IdProperty' ORM attribute value or define one key property");
 
-				idProperty  = Keys?[0].Name;
+					id_roperty = Keys?[0].Name;
+				}
+
+				return id_roperty;
 			}
 			
-			return idProperty;
+			return id_roperty;
 		}
 		/// <summary>
 		/// Exception safe try get IdProperty name
 		/// </summary>
 		/// <returns>IdProperty name or null</returns>
-		public string TryGetIdPropertyName()
+		public bool TryGetIdPropertyName(out string IdProperty)
         {
-			if (idProperty == null && Keys.Length == 1)
-				idProperty = Keys[0].Name;
+			if (id_roperty == null && Keys != null && Keys.Length == 1)
+			{
+				id_roperty = Keys[0].Name;
+			}
+			
+			IdProperty = id_roperty;
 
-			return idProperty;
+			return id_roperty != null;
 		}
 
 		static DBProviderEnum db_provider = DBProviderEnum.MSSql;
@@ -219,20 +232,20 @@ namespace ORMGen
 		public static string ForUpdateSet(this ORMTableInfo orm) => string.Join(", ", orm.Props.Where(orm_pi => !orm_pi.isKey && !orm_pi.Readonly).Select(prop => prop.Parent.DBFriendly(prop.Field) + "=@" + prop.Name));
 
 
-		/// <summary>
-		/// Matchch a field name by the specified rule
-		/// </summary>
-		/// <param name="orm_pi">ORM property info</param>
-		/// <param name="rule">Rule</param>
-		/// <returns>name of field</returns>
-		public static string ByDBRule(this ORMPropertyInfo orm_pi, ORMRulEnum rule) => ByDBRule(orm_pi.Name, rule);
-		/// <summary>
-		/// Transformation by the specified rule
-		/// </summary>
-		/// <param name="orm_pi">ORM property info</param>
-		/// <param name="rule">Rule</param>
-		/// <returns>Title</returns>
-		public static string ByViewRule(this ORMPropertyInfo orm_pi, ORMRulEnum rule) => ByViewRule(orm_pi.Name, rule);
+		///// <summary>
+		///// Matchch a field name by the specified rule
+		///// </summary>
+		///// <param name="orm_pi">ORM property info</param>
+		///// <param name="rule">Rule</param>
+		///// <returns>name of field</returns>
+		//public static string ByDBRule(this ORMPropertyInfo orm_pi, ORMRulEnum rule) => ByDBRule(orm_pi.Name, rule);
+		///// <summary>
+		///// Transformation by the specified rule
+		///// </summary>
+		///// <param name="orm_pi">ORM property info</param>
+		///// <param name="rule">Rule</param>
+		///// <returns>Title</returns>
+		//public static string ByViewRule(this ORMPropertyInfo orm_pi, ORMRulEnum rule) => ByViewRule(orm_pi.Name, rule);
 		/// <summary>
 		/// Matching, external access
 		/// </summary>
@@ -305,6 +318,7 @@ namespace ORMGen
 		public ORMTableInfo()
 		{
 			Type = typeof(T);
+			Name = Type.Name;
 
 			// Collect metadata
 
@@ -357,17 +371,17 @@ namespace ORMGen
 				var orm_prop_attr = prop_info.GetCustomAttribute<ORMPropertyAttribute>();
 				if (orm_prop_attr != null)
 				{
-					orm_pi.Field = orm_prop_attr.Field ?? orm_pi.ByDBRule(current_rules & ORMRulEnum.__DBMask);
+					orm_pi.Field = orm_prop_attr.Field ?? ORMHelper.ByViewRule(orm_pi.Name, current_rules & ORMRulEnum.__DBMask);
 					orm_pi.Format = orm_prop_attr.Format;
-					orm_pi.Title = orm_prop_attr.Title ?? orm_pi.ByViewRule(current_rules & ORMRulEnum.__ViewMask);
+					orm_pi.Title = orm_prop_attr.Title ?? ORMHelper.ByViewRule(orm_pi.Name, current_rules & ORMRulEnum.__ViewMask);
 					orm_pi.isKey = orm_prop_attr.isKey;
 					orm_pi.Readonly = orm_prop_attr.Readonly;
 					orm_pi.RefType = orm_prop_attr.RefType;
 					orm_pi.Hide = orm_prop_attr.Hide;
 				}
 
-				if (orm_pi.Title == null) orm_pi.Title = orm_pi.ByViewRule(current_rules & ORMRulEnum.__ViewMask);
-				if (orm_pi.Field == null) orm_pi.Field = orm_pi.ByDBRule(current_rules & ORMRulEnum.__DBMask);
+				if (orm_pi.Title == null) orm_pi.Title = ORMHelper.ByViewRule(orm_pi.Name, current_rules & ORMRulEnum.__ViewMask);
+				if (orm_pi.Field == null) orm_pi.Field = ORMHelper.ByDBRule(orm_pi.Name, current_rules & ORMRulEnum.__DBMask);
 
 				all_orm_pi.Add(orm_pi);
 			}
@@ -421,39 +435,39 @@ namespace ORMGen
 		/// <summary>
 		/// Type of value, use Type for codogeneration
 		/// </summary>
-		public Type Type { get; internal set; }
+		public Type Type { get; set; }
 		/// <summary>
 		/// Name of property, use Name for codogeneration
 		/// </summary>
-		public string Name { get; internal set; }
+		public string Name { get; set; }
 		/// <summary>
 		/// Title of property value, use Title for codogeneration
 		/// </summary>
-		public string Title { get; internal set; }
+		public string Title { get; set; }
 		/// <summary>
 		/// Mapping property to a field of data table, use Field for script building
 		/// </summary>
-		public string Field { get; internal set; }
+		public string Field { get; set; }
 		/// <summary>
 		/// Format for property value, use Format for codogeneration
 		/// </summary>
-		public string Format { get; internal set; }
+		public string Format { get; set; }
 		/// <summary>
 		/// Indicates that the property value is the key value, use isKey to generate and script together.
 		/// </summary>
-		public bool isKey { get; internal set; }
+		public bool isKey { get; set; }
 		/// <summary>
 		/// Readonly means not writeable to database, for script building
 		/// </summary>
-		public bool Readonly { get; internal set; }
+		public bool Readonly { get; set; }
 		/// <summary>
 		/// Referencing tagged ORMTable or other data table classes, use RefType to co-generation
 		/// </summary>
-		public Type RefType { get; internal set; }
+		public Type RefType { get; set; }
 		/// <summary>
 		/// Not displayed property, for codogeneration
 		/// </summary>
-		public bool Hide { get; internal set; }
+		public bool Hide { get; set; }
 		/// <summary>
 		/// Default constructor
 		/// </summary>
@@ -468,7 +482,7 @@ namespace ORMGen
 		{
 			Parent = parent;
 			Name = name;
-			Type = Type;
+			Type = value_type;
 		}
 	}
 	/// <summary>

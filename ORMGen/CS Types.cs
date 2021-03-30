@@ -93,6 +93,89 @@ namespace ORMGen.Builders
         /// Regex for convert name to valid CS name
         /// </summary>
         public static readonly Regex ToValidNameRegex = new Regex(@"[\W\s_\~\!\@\#\$\%\^\&\*\(\)\[\]]+");
+
+
+        /// <summary>
+        /// Build ORMTableInfo class instance from dynamic query result with default provider binding
+        /// </summary>
+        /// <param name="query_result">IEnumerable&lt;dynamic&gt;dapper query result</param>
+        /// <param name="table_name">Table name</param>
+        /// <param name="As">as short name</param>
+        /// <returns>ORMTableInfo</returns>
+        public static ORMTableInfo ORMFromDynamicQueryResult(IEnumerable<dynamic> query_result, string table_name, string As = null)
+        {
+            var columnset = new List<column_set_item>();
+            var first_round = true;
+            foreach (var row in query_result)
+            {
+                if (first_round)
+                {
+                    first_round = false;
+                    foreach (var pair in row)
+                        columnset.Add(new column_set_item() { Name = row.Key });
+                }
+                var i = 0;
+                foreach (var pair in row)
+                {
+                    var colname = pair.Key;
+                    var column_value = pair.Value;
+                    columnset[i].Name = colname;
+
+                    if (column_value == null)
+                        columnset[i].Nullable = true;
+                    else
+                        columnset[i].Type = column_value.GetType();
+
+                    i++;
+                }
+            }
+
+            for (int i = 0, c = columnset.Count; i < c; i++)
+            {
+                Type coltype = columnset[i].Type;
+                if (coltype == null)
+                {
+                    Console.WriteLine(columnset[i].Name + " no values, no type defined! Default: nullable string?");
+                    columnset[i].Type = typeof(string);
+                }
+            }
+
+            var orm = new ORMTableInfo();
+
+            // Append attributes
+
+            var for_table_name = table_name.Trim(' ', '[', ']', '"', '`');
+            orm.Name = ORMBuilder.ToValidNameRegex.Replace(for_table_name, "_");
+            orm.TableName = for_table_name;
+            orm.As = As;
+            orm.Title = ORMGen.ORMHelper.ByViewRule(orm.Name, orm.Rules);
+
+            orm.Props = columnset.Select(row =>
+            {
+                var property_name = ORMBuilder.ToValidNameRegex.Replace(row.Name, "_");
+
+                var value_type = row.Type;
+                if ((value_type.IsValueType || value_type == typeof(DateTime)) && row.Nullable)
+                    value_type = Type.GetType(value_type.CSTypeSyntax() + "?");
+
+                var orm_pi = new ORMPropertyInfo(orm, property_name, row.Type)
+                {
+                    Field = ORMHelper.ByDBRule(property_name, orm.Rules),
+                    Title = ORMHelper.ByViewRule(property_name, orm.Rules)
+                };
+                return orm_pi;
+            }).ToArray();
+
+            return orm;
+        }
+
+        class column_set_item
+        {
+            public string Name;
+            public Type Type;
+            public bool Nullable;
+        }
+
         /// <summary>
         /// Build ORMTable data model source code
         /// </summary>
@@ -100,7 +183,7 @@ namespace ORMGen.Builders
         /// <param name="table_name">Name for generate code</param>
         /// <param name="output_type">Typ of output structure</param>
         /// <returns></returns>
-        public static string GenORMTableTypeCode(this ORMTableInfo orm, string table_name, GenerateTypeNameEnum output_type = GenerateTypeNameEnum.Class)
+        public static string GenORMTableTypeCode(ORMTableInfo orm, string table_name, GenerateTypeNameEnum output_type = GenerateTypeNameEnum.Class)
         {
             ORMRulEnum current_rules = orm.Rules;
 
@@ -110,7 +193,7 @@ namespace ORMGen.Builders
             var generate_name = ToValidNameRegex.Replace(for_table_name, "_");
             if (generate_name.Blank())
                 throw new ArgumentException("Unassigned or invalid table name");
-            generate_name = ToValidNameRegex.Replace(generate_name, "_");
+            generate_name = ORMBuilder.ToValidNameRegex.Replace(generate_name, "_");
             var generate_type = Enum.GetName(output_type).ToLower();
 
             // Append attributes
@@ -122,12 +205,12 @@ namespace ORMGen.Builders
             if (ORMHelper.ByViewRule(generate_name, current_rules) != orm.Title)
                 values.Add("Title = \"" + orm.Title + "\"");
 
-            if (table_name != ORMHelper.ByDBRule(generate_name, current_rules))
-                values.Add((string)("TableName = \"" + table_name + "\""));
+            if (for_table_name != ORMHelper.ByDBRule(generate_name, current_rules))
+                values.Add((string)("TableName = \"" + for_table_name + "\""));
 
             if (orm.As.notBlank()) values.Add("As = \"" + orm.As + "\"");
-            if (orm.IdProperty.notBlank()) values.Add("IdProperty = \"" + orm.IdProperty + "\"");
-            if (orm.TextProperty.notBlank()) values.Add("TextProperty = \"" + orm.TextProperty + "\"");
+            if (orm.TryGetIdPropertyName(out var id_property_name)) values.Add("IdProperty = \"" + id_property_name + "\"");
+            if (orm.TextProperty.notBlank() == true) values.Add("TextProperty = \"" + orm.TextProperty + "\"");
             if (orm.Readonly) values.Add("Readonly = true");
 
             if (values.Count == 0)
@@ -163,6 +246,7 @@ namespace ORMGen.Builders
 
             return sb.ToString();
         }
+
         /// <summary>
         /// Output model type
         /// </summary>
