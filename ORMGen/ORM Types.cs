@@ -36,7 +36,7 @@ namespace ORMGen
 		/// <summary>
 		/// The row identification of the database table, can be a key, composite key, hash property. If not specified using a class attribute, then a single key is selected. Otherwise, an exception is thrown.
 		/// </summary>
-		public string IdProperty { get => GetIdPropertyName(); set { id_roperty = value; } }
+		public string IdProperty { get => GetIdPropertyName(); set { id_property = value; } }
 		/// <summary>
 		/// Text property that give a representation of the object
 		/// </summary>
@@ -58,23 +58,23 @@ namespace ORMGen
 		/// </summary>
 		public ORMPropertyInfo[] References { get; set; }
 
-		string id_roperty;
+		string id_property;
 		string GetIdPropertyName()
 		{
-			if (id_roperty == null)
+			if (id_property == null)
 			{
-				if (id_roperty == null)
+				if (id_property == null)
 				{
 					if (Keys == null || Keys.Length != 1)
 						throw new NullReferenceException("Need to set 'IdProperty' ORM attribute value or define one key property");
 
-					id_roperty = Keys?[0].Name;
+					id_property = Keys?[0].Name;
 				}
 
-				return id_roperty;
+				return id_property;
 			}
 			
-			return id_roperty;
+			return id_property;
 		}
 		/// <summary>
 		/// Exception safe try get IdProperty name
@@ -82,14 +82,14 @@ namespace ORMGen
 		/// <returns>IdProperty name or null</returns>
 		public bool TryGetIdPropertyName(out string IdProperty)
         {
-			if (id_roperty == null && Keys != null && Keys.Length == 1)
+			if (id_property == null && Keys != null && Keys.Length == 1)
 			{
-				id_roperty = Keys[0].Name;
+				id_property = Keys[0].Name;
 			}
 			
-			IdProperty = id_roperty;
+			IdProperty = id_property;
 
-			return id_roperty != null;
+			return id_property != null;
 		}
 
 		static DBProviderEnum db_provider = DBProviderEnum.MSSql;
@@ -200,15 +200,21 @@ namespace ORMGen
 		/// <returns>(string) condition for where part</returns>
 		public static string ForSelectConditionKeys(this IEnumerable<ORMPropertyInfo> props) => string.Join(" and ", props.Select(orm_pi => orm_pi.Parent.DBFriendly(orm_pi.Field) + "=@" + orm_pi.Name));
 		/// <summary>
-		/// Formatting a list of mapped properties passed from an object for insert script (values part)
+		/// Formatting a list of fields for insert script
 		/// </summary>
-		/// <returns>(string) for values part</returns>
-		public static string ForInsertValues(this IEnumerable<ORMPropertyInfo> props) => string.Join(",", props.Select(orm_pi => "@" + orm_pi.Name));
+		/// <returns>Fields list for insert script</returns>
+		public static string ForInsert(this IEnumerable<ORMPropertyInfo> props) => string.Join(",", props.Where(orm_pi => !orm_pi.Readonly).Select(orm_pi => orm_pi.Parent.DBFriendly(orm_pi.Field)));
+		/// <summary>
+		/// Formatting a list of values for insert script
+		/// </summary>
+		/// <returns>values part of script</returns>
+		public static string ForInsertValues(this IEnumerable<ORMPropertyInfo> props) => string.Join(",", props.Where(orm_pi => !orm_pi.Readonly).Select(orm_pi => "@" + orm_pi.Name));
 		/// <summary>
 		/// Formatting a list of values passed from an object for update script (set part)
 		/// </summary>
 		/// <returns>(string) for set part</returns>
 		public static string ForUpdateSet(this IEnumerable<ORMPropertyInfo> props) => string.Join(", ", props.Where(orm_pi => !orm_pi.isKey && !orm_pi.Readonly).Select(prop => prop.Parent.DBFriendly(prop.Field) + "=@" + prop.Name));
+
 
 		/// <summary>
 		/// Formatting a full properties list of mapped properties passed from an object for select script condition (where part)
@@ -221,15 +227,21 @@ namespace ORMGen
 		/// <returns>(string) condition for where part</returns>
 		public static string ForSelectConditionKeys(this ORMTableInfo orm) => string.Join(" and ", orm.Keys.Select(orm_pi => orm.DBFriendly(orm_pi.Field) + "=@" + orm_pi.Name));
 		/// <summary>
-		/// Formatting a full list of mapped properties passed from an object for insert script (values part)
+		/// Formatting a list of fields for insert script
 		/// </summary>
-		/// <returns>(string) for values part</returns>
-		public static string ForInsertValues(this ORMTableInfo orm) => string.Join(",", orm.Props.Select(orm_pi => "@" + orm_pi.Name));
+		/// <param name="orm">ORMTableInfo instance</param>
+		/// <returns>Fields list for insert script</returns>
+		public static string ForInsertFields(this ORMTableInfo orm) => string.Join(",", orm.Props.Where(orm_pi => !orm_pi.Readonly).Select(orm_pi => orm.DBFriendly(orm_pi.Field)));
+		/// <summary>
+		/// Formatting a list of values for insert script
+		/// </summary>
+		/// <returns>values part of script</returns>
+		public static string ForInsertValues(this ORMTableInfo orm) => string.Join(",", orm.Props.Where(orm_pi => !orm_pi.Readonly).Select(orm_pi => "@" + orm_pi.Name));
 		/// <summary>
 		/// Formatting a full list of values passed from an object for update script (set part)
 		/// </summary>
 		/// <returns>(string) for set part</returns>
-		public static string ForUpdateSet(this ORMTableInfo orm) => string.Join(", ", orm.Props.Where(orm_pi => !orm_pi.isKey && !orm_pi.Readonly).Select(prop => prop.Parent.DBFriendly(prop.Field) + "=@" + prop.Name));
+		public static string ForUpdateSet(this ORMTableInfo orm) => string.Join(", ", orm.Props.Where(orm_pi => !orm_pi.isKey && !orm_pi.Readonly).Select(prop => orm.DBFriendly(prop.Field) + "=@" + prop.Name));
 
 
 		///// <summary>

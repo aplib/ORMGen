@@ -199,11 +199,17 @@
             </summary>
             <returns>(string) condition for where part</returns>
         </member>
+        <member name="M:ORMGen.ORMHelper.ForInsert(System.Collections.Generic.IEnumerable{ORMGen.ORMPropertyInfo})">
+            <summary>
+            Formatting a list of fields for insert script
+            </summary>
+            <returns>Fields list for insert script</returns>
+        </member>
         <member name="M:ORMGen.ORMHelper.ForInsertValues(System.Collections.Generic.IEnumerable{ORMGen.ORMPropertyInfo})">
             <summary>
-            Formatting a list of mapped properties passed from an object for insert script (values part)
+            Formatting a list of values for insert script
             </summary>
-            <returns>(string) for values part</returns>
+            <returns>values part of script</returns>
         </member>
         <member name="M:ORMGen.ORMHelper.ForUpdateSet(System.Collections.Generic.IEnumerable{ORMGen.ORMPropertyInfo})">
             <summary>
@@ -223,11 +229,18 @@
             </summary>
             <returns>(string) condition for where part</returns>
         </member>
+        <member name="M:ORMGen.ORMHelper.ForInsertFields(ORMGen.ORMTableInfo)">
+            <summary>
+            Formatting a list of fields for insert script
+            </summary>
+            <param name="orm">ORMTableInfo instance</param>
+            <returns>Fields list for insert script</returns>
+        </member>
         <member name="M:ORMGen.ORMHelper.ForInsertValues(ORMGen.ORMTableInfo)">
             <summary>
-            Formatting a full list of mapped properties passed from an object for insert script (values part)
+            Formatting a list of values for insert script
             </summary>
-            <returns>(string) for values part</returns>
+            <returns>values part of script</returns>
         </member>
         <member name="M:ORMGen.ORMHelper.ForUpdateSet(ORMGen.ORMTableInfo)">
             <summary>
