@@ -193,7 +193,6 @@ namespace ORMGen.Builders
             var generate_name = ToValidNameRegex.Replace(for_table_name, "_");
             if (generate_name.Blank())
                 throw new ArgumentException("Unassigned or invalid table name");
-            generate_name = ORMBuilder.ToValidNameRegex.Replace(generate_name, "_");
             var generate_type = Enum.GetName(output_type).ToLower();
 
             // Append attributes
@@ -240,7 +239,7 @@ namespace ORMGen.Builders
                 if (values.Count > 0)
                     sb.AppendLine($"    [ORMProperty({string.Join(", ", values)})]");
 
-                sb.AppendLine($"    public {orm_pi.Type.CSTypeSyntax()} {orm_pi.Name}" + " { get; set; }");
+                sb.AppendLine($"    public {orm_pi.Type.CSTypeSyntax()} {orm_pi.Name} {{ get; set; }}");
             }
             sb.AppendLine("}");
 
