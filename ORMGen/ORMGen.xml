@@ -219,7 +219,7 @@
         </member>
         <member name="M:ORMGen.ORMHelper.ForSelectFields(ORMGen.ORMTableInfo)">
             <summary>
-            Formatting a full properties list of mapped properties passed from an object for select script condition (where part)
+            Formatting a full properties list of mapped properties passed from an object for select script
             </summary>
             <returns>(string) condition for where part</returns>
         </member>

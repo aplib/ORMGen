@@ -217,7 +217,7 @@ namespace ORMGen
 
 
 		/// <summary>
-		/// Formatting a full properties list of mapped properties passed from an object for select script condition (where part)
+		/// Formatting a full properties list of mapped properties passed from an object for select script
 		/// </summary>
 		/// <returns>(string) condition for where part</returns>
 		public static string ForSelectFields(this ORMTableInfo orm) => string.Join(",", orm.Props.Select(orm_pi => orm.DBFriendly(orm_pi.Field) + " as " + orm_pi.Name));
@@ -383,9 +383,9 @@ namespace ORMGen
 				var orm_prop_attr = prop_info.GetCustomAttribute<ORMPropertyAttribute>();
 				if (orm_prop_attr != null)
 				{
-					orm_pi.Field = orm_prop_attr.Field ?? ORMHelper.ByViewRule(orm_pi.Name, current_rules & ORMRulEnum.__DBMask);
-					orm_pi.Format = orm_prop_attr.Format;
 					orm_pi.Title = orm_prop_attr.Title ?? ORMHelper.ByViewRule(orm_pi.Name, current_rules & ORMRulEnum.__ViewMask);
+					orm_pi.Field = orm_prop_attr.Field ?? ORMHelper.ByDBRule(orm_pi.Name, current_rules & ORMRulEnum.__DBMask);
+					orm_pi.Format = orm_prop_attr.Format;
 					orm_pi.isKey = orm_prop_attr.isKey;
 					orm_pi.Readonly = orm_prop_attr.Readonly;
 					orm_pi.RefType = orm_prop_attr.RefType;
