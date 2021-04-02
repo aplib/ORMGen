@@ -133,12 +133,12 @@
         </member>
         <member name="P:ORMGen.ORMTableInfo.DBProvider">
             <summary>
-            Selecting the SQL data provider
+            Selected the SQL data provider
             </summary>
         </member>
         <member name="M:ORMGen.ORMTableInfo.UseDBProvider(ORMGen.DBProviderEnum)">
             <summary>
-            Selecting the SQL data provider
+            Selecting a the SQL data provider
             </summary>
             <param name="provider"></param>
         </member>
@@ -155,10 +155,37 @@
         </member>
         <member name="P:ORMGen.ORMTableInfo.Rules">
             <summary>
-            Default mapping rules
+            Default rules
             </summary>
         </member>
         <member name="M:ORMGen.ORMTableInfo.UseRules(ORMGen.ORMRulEnum)">
+            <summary>
+            Set mapping rules
+            </summary>
+        </member>
+        <member name="M:ORMGen.ORMTableInfo.#ctor">
+            <summary>
+            Default parameterless constructor
+            </summary>
+        </member>
+        <member name="M:ORMGen.ORMTableInfo.#ctor(System.Nullable{ORMGen.DBProviderEnum},System.Nullable{ORMGen.ORMRulEnum})">
+            <summary>
+            Constructor with selecting databse provider
+            </summary>
+        </member>
+        <member name="M:ORMGen.ORMTableInfo.UseDefaultDBProvider(ORMGen.DBProviderEnum)">
+            <summary>
+            Set a default databse provider
+            </summary>
+            <param name="provider">database provider</param>
+        </member>
+        <member name="M:ORMGen.ORMTableInfo.UseDefaultDBFriendly(System.Func{System.String,System.String})">
+            <summary>
+            Set a default db friendly function
+            </summary>
+            <param name="db_friendly_func">db friendly function</param>
+        </member>
+        <member name="M:ORMGen.ORMTableInfo.UseDefaultRules(ORMGen.ORMRulEnum)">
             <summary>
             Set default mapping rules
             </summary>
@@ -276,14 +303,14 @@
             filled with metadata when created>
             </summary>
         </member>
-        <member name="M:ORMGen.ORMTableInfo`1.#ctor(ORMGen.DBProviderEnum)">
-            <summary>
-            Create a specified ORMTable filled from metadata object and select DB provider
-            </summary>
-        </member>
         <member name="M:ORMGen.ORMTableInfo`1.#ctor">
             <summary>
-            Create a specified ORMTable filled from metadata object
+            Default parameterless constructor of a specified ORMTable
+            </summary>
+        </member>
+        <member name="M:ORMGen.ORMTableInfo`1.#ctor(System.Nullable{ORMGen.DBProviderEnum},System.Nullable{ORMGen.ORMRulEnum})">
+            <summary>
+            Constructor of a specified ORMTable with optional selecting default DB provider, rules, and filling from metadata
             </summary>
         </member>
         <member name="T:ORMGen.ORMTableAttribute">

@@ -73,7 +73,7 @@ namespace ORMGen
 
 				return id_property;
 			}
-			
+
 			return id_property;
 		}
 		/// <summary>
@@ -81,24 +81,24 @@ namespace ORMGen
 		/// </summary>
 		/// <returns>IdProperty name or null</returns>
 		public bool TryGetIdPropertyName(out string IdProperty)
-        {
+		{
 			if (id_property == null && Keys != null && Keys.Length == 1)
 			{
 				id_property = Keys[0].Name;
 			}
-			
+
 			IdProperty = id_property;
 
 			return id_property != null;
 		}
 
-		static DBProviderEnum db_provider = DBProviderEnum.MSSql;
+		DBProviderEnum db_provider = DBProviderEnum.MSSql;
 		/// <summary>
-		/// Selecting the SQL data provider
+		/// Selected the SQL data provider
 		/// </summary>
 		public DBProviderEnum DBProvider { get => db_provider; internal set => UseDBProvider(value); }
 		/// <summary>
-		/// Selecting the SQL data provider
+		/// Selecting a the SQL data provider
 		/// </summary>
 		/// <param name="provider"></param>
 		public void UseDBProvider(DBProviderEnum provider)
@@ -117,7 +117,6 @@ namespace ORMGen
 
 			};
 		}
-
 		static Func<string, string> db_friendly = MSSQLScriptBuilder.DBFriendly;
 		/// <summary>
 		/// String formatting function for compatibility names with the provider
@@ -135,32 +134,75 @@ namespace ORMGen
 			db_friendly = db_friendly_func;
 		}
 
-		ORMRulEnum default_rules = ORMRulEnum.DBReplaceUnderscoresWithSpaces | ORMRulEnum.ViewHumanitaize;
+		ORMRulEnum mapping_rules = ORMRulEnum.DBReplaceUnderscoresWithSpaces | ORMRulEnum.ViewHumanitaize;
 		/// <summary>
-		/// Default mapping rules
+		/// Default rules
 		/// </summary>
-		public ORMRulEnum Rules { get=>default_rules; set=>UseRules(value); }
+		public ORMRulEnum Rules { get => mapping_rules; set => UseRules(value); }
 		/// <summary>
-		/// Set default mapping rules
+		/// Set mapping rules
 		/// </summary>
 		public void UseRules(ORMRulEnum rules)
-        {
-			if (rules != default_rules)
-				default_rules = rules;
+		{
+			if (rules != mapping_rules)
+				mapping_rules = rules;
 		}
 
+
 		/// <summary>
-		/// Default constructor
+		/// Default parameterless constructor
 		/// </summary>
 		public ORMTableInfo()
 		{
+			UseDBProvider(default_db_provider);
+			UseRules(default_mapping_rules);
 		}
 		/// <summary>
-		/// Create a specified ORMTable filled from metadata object and select DB provider
+		/// Constructor with selecting databse provider
 		/// </summary>
-		public ORMTableInfo(DBProviderEnum provider)
+		public ORMTableInfo(DBProviderEnum? provider = null, ORMRulEnum? rules = null)
 		{
-			UseDBProvider(provider);
+			UseDBProvider(provider ?? default_db_provider);
+			UseRules(rules ?? default_mapping_rules);
+		}
+
+
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+		internal protected ORMRulEnum default_mapping_rules = ORMRulEnum.DBReplaceUnderscoresWithSpaces | ORMRulEnum.ViewHumanitaize;
+		internal protected static DBProviderEnum default_db_provider  { get;set;}  = DBProviderEnum.MSSql;
+		internal protected static Func<string, string> default_db_friendly = MSSQLScriptBuilder.DBFriendly;
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+		/// <summary>
+		/// Set a default databse provider
+		/// </summary>
+		/// <param name="provider">database provider</param>
+		public void UseDefaultDBProvider(DBProviderEnum provider)
+		{
+			default_db_provider = provider;
+			default_db_friendly = provider switch
+			{
+				DBProviderEnum.MSSql => MSSQLScriptBuilder.DBFriendly,
+				DBProviderEnum.MySQL => MySQLScriptBuilder.DBFriendly,
+				DBProviderEnum.OracleSQL => OracleSQLScriptBuilder.DBFriendly,
+				DBProviderEnum.PostgreSQL => PostgreSQLScriptBuilder.DBFriendly,
+				_ => MSSQLScriptBuilder.DBFriendly
+
+			};
+		}
+		/// <summary>
+		/// Set a default db friendly function
+		/// </summary>
+		/// <param name="db_friendly_func">db friendly function</param>
+		public void UseDefaultDBFriendly(Func<string, string> db_friendly_func)
+		{
+			default_db_friendly = db_friendly_func;
+		}
+		/// <summary>
+		/// Set default mapping rules
+		/// </summary>
+		public void UseDefaultRules(ORMRulEnum rules)
+		{
+			default_mapping_rules = rules;
 		}
 	}
 
@@ -331,12 +373,20 @@ namespace ORMGen
 	/// </summary>
 	public class ORMTableInfo<T> : ORMTableInfo
 	{
-
 		/// <summary>
-		/// Create a specified ORMTable filled from metadata object
+		/// Default parameterless constructor of a specified ORMTable
 		/// </summary>
-		public ORMTableInfo()
+		public ORMTableInfo() : this(null, null)
+        {
+        }
+		/// <summary>
+		/// Constructor of a specified ORMTable with optional selecting default DB provider, rules, and filling from metadata
+		/// </summary>
+		public ORMTableInfo(DBProviderEnum? provider = null, ORMRulEnum? rules = null)
 		{
+			UseDBProvider(provider ?? default_db_provider);
+			UseRules(rules ?? default_mapping_rules);
+
 			Type = typeof(T);
 			Name = Type.Name;
 
