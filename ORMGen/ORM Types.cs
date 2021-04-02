@@ -148,6 +148,20 @@ namespace ORMGen
 			if (rules != default_rules)
 				default_rules = rules;
 		}
+
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public ORMTableInfo()
+		{
+		}
+		/// <summary>
+		/// Create a specified ORMTable filled from metadata object and select DB provider
+		/// </summary>
+		public ORMTableInfo(DBProviderEnum provider)
+		{
+			UseDBProvider(provider);
+		}
 	}
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
@@ -317,13 +331,7 @@ namespace ORMGen
 	/// </summary>
 	public class ORMTableInfo<T> : ORMTableInfo
 	{
-		/// <summary>
-		/// Create a specified ORMTable filled from metadata object and select DB provider
-		/// </summary>
-		public ORMTableInfo(DBProviderEnum provider) : this()
-		{
-			UseDBProvider(provider);
-		}
+
 		/// <summary>
 		/// Create a specified ORMTable filled from metadata object
 		/// </summary>
