@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,7 +32,7 @@ namespace ORMGen.Builders
         /// <returns></returns>
         public static bool notBlank(this string str) => str != null && !string.IsNullOrWhiteSpace(str);
 
-        static Dictionary<Type, string> type_names = new()
+        static ConcurrentDictionary<Type, string> type_names = new(new Dictionary<Type, string>()
         {
             { typeof(sbyte), "sbyte" },
             { typeof(byte), "byte" },
@@ -68,7 +69,7 @@ namespace ORMGen.Builders
             { typeof(DateTime), "DateTime" },
             { typeof(DateTime?), "DateTime?" },
 
-        };
+        });
 
         /// <summary>
         /// Get type name C# syntax
