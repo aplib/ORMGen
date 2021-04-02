@@ -63,6 +63,8 @@ namespace ORMGen.Builders
             { typeof(bool?), "bool?" },
             { typeof(decimal?), "decimal?" },
 
+            { typeof(string), "string" },
+
             { typeof(DateTime), "DateTime" },
             { typeof(DateTime?), "DateTime?" },
 
