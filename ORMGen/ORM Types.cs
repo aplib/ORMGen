@@ -219,7 +219,7 @@ namespace ORMGen
 		/// </summary>
 		/// <param name="str">input string</param>
 		/// <returns>Trimmed string without special characters at the start and end</returns>
-		public static string RemoveBrackets(string str) => str.Trim(' ', '[', ']', '"', '\'', '`');
+		public static string RemoveBrackets(string str) => str?.Trim(' ', '[', ']', '"', '\'', '`');
 		/// <summary>
 		/// Select properties except specified
 		/// </summary>

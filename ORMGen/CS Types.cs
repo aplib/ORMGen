@@ -11,13 +11,13 @@ namespace ORMGen.Builders
     /// Common C# type extension
     /// </summary>
 	public static partial class CSHelper
-	{
-		/// <summary>
-		/// Check if type is nullable
-		/// </summary>
-		/// <param name="type">Type type</param>
-		/// <returns>True if type is Nullable&lt;&gt;</returns>
-		public static bool isNullable(this Type type) => Nullable.GetUnderlyingType(type) != null;
+    {
+        /// <summary>
+        /// Check if type is nullable
+        /// </summary>
+        /// <param name="type">Type type</param>
+        /// <returns>True if type is Nullable&lt;&gt;</returns>
+        public static bool isNullable(this Type type) => Nullable.GetUnderlyingType(type) != null;
         /// <summary>
         /// Indicates whether a specified string is null, empty, or consists only of white-space characters.
         /// calls string.IsNullOrWhiteSpace()
@@ -180,17 +180,21 @@ namespace ORMGen.Builders
         /// <param name="table_name">Name for generate code</param>
         /// <param name="output_type">Typ of output structure</param>
         /// <returns></returns>
-        public static string GenORMTableTypeCode(ORMTableInfo orm, string table_name, GenerateTypeNameEnum output_type = GenerateTypeNameEnum.Class)
+        public static string GenORMTableTypeCode(ORMTableInfo orm/*, string table_name*/, GenerateTypeNameEnum output_type = GenerateTypeNameEnum.Class)
         {
             ORMRulEnum current_rules = orm.Rules;
 
             var sb = new StringBuilder();
 
-            var for_table_name = ORMHelper.RemoveBrackets(table_name);
-            var generate_name = ORMHelper.ToValidNameRegex.Replace(for_table_name, "_");
-            if (generate_name.Blank())
-                throw new ArgumentException("Unassigned or invalid table name");
-            var generate_type = Enum.GetName(output_type).ToLower();
+            //var for_table_name = ORMHelper.RemoveBrackets(table_name);
+            //var generate_name = ORMHelper.ToValidNameRegex.Replace(for_table_name, "_");
+            //if (generate_name.Blank())
+            if (orm.Name.Blank())
+                throw new ArgumentException("Unassigned or invalid orm name");
+            if (ORMHelper.RemoveBrackets(orm.TableName))
+                throw new ArgumentException("Unassigned or invalid orm name");
+
+            var generate_type_class = Enum.GetName(output_type).ToLower();
 
             // Append attributes
 
@@ -214,7 +218,7 @@ namespace ORMGen.Builders
             else
                 sb.AppendLine($@"[ORMTable({string.Join(", ", values)})]");
 
-            sb.AppendLine($"public partial {generate_type} {generate_name} //::generated");
+            sb.AppendLine($"public partial {generate_type_class} {generate_name} //::generated");
             sb.AppendLine("{");
             foreach (var orm_pi in orm.Props)
             {
