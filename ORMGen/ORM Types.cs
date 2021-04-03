@@ -211,6 +211,12 @@ namespace ORMGen
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	{
 		/// <summary>
+		/// Remove special characters at start and end
+		/// </summary>
+		/// <param name="str">input string</param>
+		/// <returns>Trimmed string without special characters at the start and end</returns>
+		public static string RemoveBrackets(string str) => str.Trim(' ', '[', ']', '"', '\'', '`');
+		/// <summary>
 		/// Select properties other than those listed
 		/// </summary>
 		/// <param name="orm">ORM instance</param>
@@ -222,7 +228,7 @@ namespace ORMGen
 			return orm.Props.Where(orm_pi => Array.IndexOf<string>(parts, orm_pi.Name) < 0);
 		}
 		/// <summary>
-		/// Properties except those specified
+		/// Properties except specified
 		/// </summary>
 		/// <param name="props">this enumeration properties</param>
 		/// <param name="filter">comma-separated property names to be excluded</param>
@@ -233,7 +239,7 @@ namespace ORMGen
 			return props.Where(orm_pi => Array.IndexOf<string>(parts, orm_pi.Name) < 0);
 		}
 		/// <summary>
-		/// Select of specific properties
+		/// Select of specified properties
 		/// </summary>
 		/// <param name="orm">ORM instance</param>
 		/// <param name="filter">comma-separated property names to be selected</param>
@@ -281,7 +287,7 @@ namespace ORMGen
 		/// Formatting a key properties list for select script condition (where part)
 		/// </summary>
 		/// <returns>(string) condition for where part</returns>
-		public static string ForSelectConditionKeys(this ORMTableInfo orm) => string.Join(" and ", orm.Keys.Select(orm_pi => orm.DBFriendly(orm_pi.Field) + "=@" + orm_pi.Name));
+		public static string ForSelectConditionKeys(this ORMTableInfo orm) => string.Join(" and ", orm.Keys?.Select(orm_pi => orm.DBFriendly(orm_pi.Field) + "=@" + orm_pi.Name));
 		/// <summary>
 		/// Formatting a list of fields for insert script
 		/// </summary>
@@ -418,7 +424,7 @@ namespace ORMGen
 			TextProperty = table_attr.TextProperty;
 			Readonly = table_attr.Readonly;
 			As = table_attr.As ?? table_type_info.Name;
-			As = Regex.Replace(As.Trim().ToLower(), @"[\W\s_\~\!\@\#\$\%\^\&\*\(\)\[\]]+", "_");
+			As = Regex.Replace(ORMHelper.RemoveBrackets(As).ToLower(), $@"[\W\s_\~\!\@\#\$\%\^\'\""\`\&\*\(\)\[\]]+", "_");
 
 			// For all properties:
 

@@ -95,7 +95,7 @@ namespace ORMGen.Builders
         /// <summary>
         /// Regex for convert name to valid CS name
         /// </summary>
-        public static readonly Regex ToValidNameRegex = new Regex(@"[\W\s_\~\!\@\#\$\%\^\&\*\(\)\[\]]+");
+        public static readonly Regex ToValidNameRegex = new Regex($@"[\W\s_\~\!\@\#\$\%\^\'\""\`\&\*\(\)\[\]]+");
 
 
         /// <summary>
@@ -147,7 +147,7 @@ namespace ORMGen.Builders
 
             // Append attributes
 
-            var for_table_name = table_name.Trim(' ', '[', ']', '"', '`');
+            var for_table_name = ORMHelper.RemoveBrackets(table_name);
             orm.Name = ORMBuilder.ToValidNameRegex.Replace(for_table_name, "_");
             orm.TableName = for_table_name;
             orm.As = As;
@@ -192,7 +192,7 @@ namespace ORMGen.Builders
 
             var sb = new StringBuilder();
 
-            var for_table_name = table_name.Trim(' ', '[', ']', '"', '`');
+            var for_table_name = ORMHelper.RemoveBrackets(table_name);
             var generate_name = ToValidNameRegex.Replace(for_table_name, "_");
             if (generate_name.Blank())
                 throw new ArgumentException("Unassigned or invalid table name");
@@ -234,6 +234,7 @@ namespace ORMGen.Builders
                 if (for_field != orm_pi.Name || orm_pi.Field != orm_pi.Name)
                     values.Add($@"Field = ""{orm_pi.Field ?? for_field}""");
 
+                if (orm_pi.Format.notBlank()) values.Add($@"Format = {orm_pi.Format}");
                 if (orm_pi.isKey) values.Add($@"isKey = true");
                 if (orm_pi.Readonly) values.Add($@"Readonly = true");
                 if (orm_pi.Hide) values.Add($@"Hide = true");
