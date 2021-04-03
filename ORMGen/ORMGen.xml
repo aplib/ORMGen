@@ -38,11 +38,6 @@
             <param name="type">Type</param>
             <returns>String Type name</returns>
         </member>
-        <member name="F:ORMGen.Builders.ORMBuilder.ToValidNameRegex">
-            <summary>
-            Regex for convert name to valid CS name
-            </summary>
-        </member>
         <member name="M:ORMGen.Builders.ORMBuilder.ORMFromDynamicQueryResult(System.Collections.Generic.IEnumerable{System.Object},System.String,System.String)">
             <summary>
             Build ORMTableInfo class instance from dynamic query result with default provider binding
@@ -170,29 +165,41 @@
         </member>
         <member name="M:ORMGen.ORMTableInfo.#ctor(System.Nullable{ORMGen.DBProviderEnum},System.Nullable{ORMGen.ORMRulEnum})">
             <summary>
-            Constructor with selecting databse provider
+            Constructor with selecting databse provider and rules
             </summary>
         </member>
-        <member name="M:ORMGen.ORMTableInfo.UseDefaultDBProvider(ORMGen.DBProviderEnum)">
+        <member name="M:ORMGen.ORMTableInfo.SetDefaultDBProvider(ORMGen.DBProviderEnum)">
             <summary>
             Set a default databse provider
             </summary>
             <param name="provider">database provider</param>
         </member>
-        <member name="M:ORMGen.ORMTableInfo.UseDefaultDBFriendly(System.Func{System.String,System.String})">
+        <member name="M:ORMGen.ORMTableInfo.SetDefaultDBFriendly(System.Func{System.String,System.String})">
             <summary>
             Set a default db friendly function
             </summary>
             <param name="db_friendly_func">db friendly function</param>
         </member>
-        <member name="M:ORMGen.ORMTableInfo.UseDefaultRules(ORMGen.ORMRulEnum)">
+        <member name="M:ORMGen.ORMTableInfo.SetDefaultRules(ORMGen.ORMRulEnum)">
             <summary>
             Set default mapping rules
             </summary>
         </member>
+        <member name="F:ORMGen.ORMHelper.ToValidNameRegex">
+            <summary>
+            Regex for convert name to valid CS name
+            </summary>
+        </member>
+        <member name="M:ORMGen.ORMHelper.RemoveBrackets(System.String)">
+            <summary>
+            Remove special characters at start and end
+            </summary>
+            <param name="str">input string</param>
+            <returns>Trimmed string without special characters at the start and end</returns>
+        </member>
         <member name="M:ORMGen.ORMHelper.Reject(ORMGen.ORMTableInfo,System.String)">
             <summary>
-            Select properties other than those listed
+            Select properties except specified
             </summary>
             <param name="orm">ORM instance</param>
             <param name="filter">comma-separated property names to be excluded</param>
@@ -200,7 +207,7 @@
         </member>
         <member name="M:ORMGen.ORMHelper.Reject(System.Collections.Generic.IEnumerable{ORMGen.ORMPropertyInfo},System.String)">
             <summary>
-            Properties except those specified
+            Properties except specified
             </summary>
             <param name="props">this enumeration properties</param>
             <param name="filter">comma-separated property names to be excluded</param>
@@ -208,7 +215,7 @@
         </member>
         <member name="M:ORMGen.ORMHelper.Select(ORMGen.ORMTableInfo,System.String)">
             <summary>
-            Select of specific properties
+            Select of specified properties
             </summary>
             <param name="orm">ORM instance</param>
             <param name="filter">comma-separated property names to be selected</param>

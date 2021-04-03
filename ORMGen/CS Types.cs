@@ -93,12 +93,6 @@ namespace ORMGen.Builders
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     {
         /// <summary>
-        /// Regex for convert name to valid CS name
-        /// </summary>
-        public static readonly Regex ToValidNameRegex = new Regex($@"[\W\s_\~\!\@\#\$\%\^\'\""\`\&\*\(\)\[\]]+");
-
-
-        /// <summary>
         /// Build ORMTableInfo class instance from dynamic query result with default provider binding
         /// </summary>
         /// <param name="query_result">IEnumerable&lt;dynamic&gt;dapper query result</param>
@@ -148,14 +142,14 @@ namespace ORMGen.Builders
             // Append attributes
 
             var for_table_name = ORMHelper.RemoveBrackets(table_name);
-            orm.Name = ORMBuilder.ToValidNameRegex.Replace(for_table_name, "_");
+            orm.Name = ORMHelper.ToValidNameRegex.Replace(for_table_name, "_");
             orm.TableName = for_table_name;
             orm.As = As;
             orm.Title = ORMGen.ORMHelper.ByViewRule(orm.Name, orm.Rules);
 
             orm.Props = columnset.Select(row =>
             {
-                var property_name = ORMBuilder.ToValidNameRegex.Replace(row.Name, "_");
+                var property_name = ORMHelper.ToValidNameRegex.Replace(row.Name, "_");
 
                 var value_type = row.Type;
                 if ((value_type.IsValueType || value_type == typeof(DateTime)) && row.Nullable)
@@ -193,7 +187,7 @@ namespace ORMGen.Builders
             var sb = new StringBuilder();
 
             var for_table_name = ORMHelper.RemoveBrackets(table_name);
-            var generate_name = ToValidNameRegex.Replace(for_table_name, "_");
+            var generate_name = ORMHelper.ToValidNameRegex.Replace(for_table_name, "_");
             if (generate_name.Blank())
                 throw new ArgumentException("Unassigned or invalid table name");
             var generate_type = Enum.GetName(output_type).ToLower();

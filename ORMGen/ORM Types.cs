@@ -158,7 +158,7 @@ namespace ORMGen
 			UseRules(default_mapping_rules);
 		}
 		/// <summary>
-		/// Constructor with selecting databse provider
+		/// Constructor with selecting databse provider and rules
 		/// </summary>
 		public ORMTableInfo(DBProviderEnum? provider = null, ORMRulEnum? rules = null)
 		{
@@ -168,15 +168,15 @@ namespace ORMGen
 
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-		internal protected ORMRulEnum default_mapping_rules = ORMRulEnum.DBReplaceUnderscoresWithSpaces | ORMRulEnum.ViewHumanitaize;
-		internal protected static DBProviderEnum default_db_provider  { get;set;}  = DBProviderEnum.MSSql;
+		internal protected static ORMRulEnum default_mapping_rules = ORMRulEnum.DBReplaceUnderscoresWithSpaces | ORMRulEnum.ViewHumanitaize;
+		internal protected static DBProviderEnum default_db_provider { get; set; } = DBProviderEnum.MSSql;
 		internal protected static Func<string, string> default_db_friendly = MSSQLScriptBuilder.DBFriendly;
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 		/// <summary>
 		/// Set a default databse provider
 		/// </summary>
 		/// <param name="provider">database provider</param>
-		public void UseDefaultDBProvider(DBProviderEnum provider)
+		public static void SetDefaultDBProvider(DBProviderEnum provider)
 		{
 			default_db_provider = provider;
 			default_db_friendly = provider switch
@@ -193,14 +193,14 @@ namespace ORMGen
 		/// Set a default db friendly function
 		/// </summary>
 		/// <param name="db_friendly_func">db friendly function</param>
-		public void UseDefaultDBFriendly(Func<string, string> db_friendly_func)
+		public void SetDefaultDBFriendly(Func<string, string> db_friendly_func)
 		{
 			default_db_friendly = db_friendly_func;
 		}
 		/// <summary>
 		/// Set default mapping rules
 		/// </summary>
-		public void UseDefaultRules(ORMRulEnum rules)
+		public void SetDefaultRules(ORMRulEnum rules)
 		{
 			default_mapping_rules = rules;
 		}
@@ -211,13 +211,17 @@ namespace ORMGen
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	{
 		/// <summary>
+		/// Regex for convert name to valid CS name
+		/// </summary>
+		public static readonly Regex ToValidNameRegex = new Regex($@"[\W\s_\~\!\@\#\$\%\^\'\""\`\&\*\(\)\[\]]+");
+		/// <summary>
 		/// Remove special characters at start and end
 		/// </summary>
 		/// <param name="str">input string</param>
 		/// <returns>Trimmed string without special characters at the start and end</returns>
 		public static string RemoveBrackets(string str) => str.Trim(' ', '[', ']', '"', '\'', '`');
 		/// <summary>
-		/// Select properties other than those listed
+		/// Select properties except specified
 		/// </summary>
 		/// <param name="orm">ORM instance</param>
 		/// <param name="filter">comma-separated property names to be excluded</param>
@@ -373,7 +377,7 @@ namespace ORMGen
 			return name;
 		}
 	}
-	
+
 	/// <summary>ORM data mapping generic class derived from base class
 	/// filled with metadata when created>
 	/// </summary>
@@ -383,8 +387,8 @@ namespace ORMGen
 		/// Default parameterless constructor of a specified ORMTable
 		/// </summary>
 		public ORMTableInfo() : this(null, null)
-        {
-        }
+		{
+		}
 		/// <summary>
 		/// Constructor of a specified ORMTable with optional selecting default DB provider, rules, and filling from metadata
 		/// </summary>
@@ -725,7 +729,7 @@ namespace ORMGen
 
 	internal static partial class PostgreSQLScriptBuilder
 	{
-		public static string DBFriendly(string name) =>name.StartsWith('"') ? name : ('"' + name + '"');
+		public static string DBFriendly(string name) => name.StartsWith('"') ? name : ('"' + name + '"');
 	}
 
 	internal static partial class MySQLScriptBuilder
