@@ -54,14 +54,14 @@ namespace ORMGen.Builders
                 foreach (var assembly in domain.GetAssemblies())
                 {
                     var types = assembly.GetTypes();
-                    foreach(var type in types)
+                    foreach (var type in types)
                     {
                         var ormtable_attr = type.GetCustomAttribute<ORMTableAttribute>();
                         if (ormtable_attr != null && ORMHelper.RemoveBrackets(ormtable_attr.TableName) == table_name)
                         {
                             orm.Type = type;
                             // there:
-                            
+
                             break;
                         }
                     }
@@ -73,7 +73,7 @@ namespace ORMGen.Builders
                     foreach (var type in types)
                     {
                         var ormtable_attr = type.GetCustomAttribute<ORMTableAttribute>();
-                        if (ormtable_attr != null && type.Name == table_name && ormtable_attr.TableName.Blank())
+                        if (ormtable_attr != null && (type.Name == table_name || type.Name == ORMHelper.ToValidNameRegex.Replace(table_name, "_")) && ormtable_attr.TableName.Blank())
                         {
                             orm.Type = type;
                             break;
@@ -99,7 +99,7 @@ namespace ORMGen.Builders
             // construct orm properties
 
             var properties = new List<ORMPropertyInfo>();
-            foreach(var row in columns)
+            foreach (var row in columns)
             {
                 // orm property attributes
 
@@ -121,6 +121,8 @@ namespace ORMGen.Builders
 
                     result.AddRange(orm_list.Where(orm => !result.Contains(orm)));
                     var ref_target_orm = result.FirstOrDefault(orm => ORMHelper.RemoveBrackets(orm.TableName) == target_table_name);
+                    if (ref_target_orm == null)
+                        ref_target_orm = result.FirstOrDefault(orm => orm.Name == target_table_name || type.Name == ORMHelper.ToValidNameRegex.Replace(table_name, "_"));
 
                     if (ref_target_orm != null && ref_target_orm.Type != null)
                     {
