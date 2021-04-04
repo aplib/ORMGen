@@ -12,7 +12,7 @@ ORMBuilder.ORMFromDynamicQueryResult
 
 ORMBuilder.GenORMTableTypeCode
 
-ORMGen.Builders packet
+ORMGen.Builders package:
 
 MSSQLORMBuilder.ORMFromSCHEMA
 
