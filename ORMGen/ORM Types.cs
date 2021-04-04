@@ -193,14 +193,14 @@ namespace ORMGen
 		/// Set a default db friendly function
 		/// </summary>
 		/// <param name="db_friendly_func">db friendly function</param>
-		public void SetDefaultDBFriendly(Func<string, string> db_friendly_func)
+		public static void SetDefaultDBFriendly(Func<string, string> db_friendly_func)
 		{
 			default_db_friendly = db_friendly_func;
 		}
 		/// <summary>
 		/// Set default mapping rules
 		/// </summary>
-		public void SetDefaultRules(ORMRulEnum rules)
+		public static void SetDefaultRules(ORMRulEnum rules)
 		{
 			default_mapping_rules = rules;
 		}
