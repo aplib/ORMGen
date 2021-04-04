@@ -177,22 +177,19 @@ namespace ORMGen.Builders
         /// Build ORMTable data model source code
         /// </summary>
         /// <param name="orm">ORMTableInfo data model</param>
-        /// <param name="table_name">Name for generate code</param>
-        /// <param name="output_type">Typ of output structure</param>
+        /// <param name="output_type">Typ of output structure or class</param>
         /// <returns></returns>
-        public static string GenORMTableTypeCode(ORMTableInfo orm/*, string table_name*/, GenerateTypeNameEnum output_type = GenerateTypeNameEnum.Class)
+        public static string GenORMTableTypeCode(ORMTableInfo orm, GenerateTypeNameEnum output_type = GenerateTypeNameEnum.Class)
         {
             ORMRulEnum current_rules = orm.Rules;
 
             var sb = new StringBuilder();
 
-            //var for_table_name = ORMHelper.RemoveBrackets(table_name);
-            //var generate_name = ORMHelper.ToValidNameRegex.Replace(for_table_name, "_");
-            //if (generate_name.Blank())
+            var for_table_name = ORMHelper.RemoveBrackets(orm.TableName);
             if (orm.Name.Blank())
                 throw new ArgumentException("Unassigned or invalid orm name");
-            if (ORMHelper.RemoveBrackets(orm.TableName))
-                throw new ArgumentException("Unassigned or invalid orm name");
+            if (ORMHelper.RemoveBrackets(orm.TableName).Blank())
+                throw new ArgumentException("Unassigned or invalid orm table name");
 
             var generate_type_class = Enum.GetName(output_type).ToLower();
 
@@ -202,10 +199,10 @@ namespace ORMGen.Builders
 
             var values = new List<string>(5);
 
-            if (ORMHelper.ByViewRule(generate_name, current_rules) != orm.Title)
+            if (ORMHelper.ByViewRule(orm.Name, current_rules) != orm.Title && orm.Title.notBlank())
                 values.Add("Title = \"" + orm.Title + "\"");
 
-            if (for_table_name != ORMHelper.ByDBRule(generate_name, current_rules))
+            if (for_table_name != ORMHelper.ByDBRule(orm.Name, current_rules))
                 values.Add((string)("TableName = \"" + for_table_name + "\""));
 
             if (orm.As.notBlank()) values.Add("As = \"" + orm.As + "\"");
@@ -218,7 +215,7 @@ namespace ORMGen.Builders
             else
                 sb.AppendLine($@"[ORMTable({string.Join(", ", values)})]");
 
-            sb.AppendLine($"public partial {generate_type_class} {generate_name} //::generated");
+            sb.AppendLine($"public partial {generate_type_class} {orm.Name} //::generated");
             sb.AppendLine("{");
             foreach (var orm_pi in orm.Props)
             {

@@ -47,13 +47,12 @@
             <param name="As">as short name</param>
             <returns>ORMTableInfo</returns>
         </member>
-        <member name="M:ORMGen.Builders.ORMBuilder.GenORMTableTypeCode(ORMGen.ORMTableInfo,System.String,ORMGen.Builders.ORMBuilder.GenerateTypeNameEnum)">
+        <member name="M:ORMGen.Builders.ORMBuilder.GenORMTableTypeCode(ORMGen.ORMTableInfo,ORMGen.Builders.ORMBuilder.GenerateTypeNameEnum)">
             <summary>
             Build ORMTable data model source code
             </summary>
             <param name="orm">ORMTableInfo data model</param>
-            <param name="table_name">Name for generate code</param>
-            <param name="output_type">Typ of output structure</param>
+            <param name="output_type">Typ of output structure or class</param>
             <returns></returns>
         </member>
         <member name="T:ORMGen.Builders.ORMBuilder.GenerateTypeNameEnum">
