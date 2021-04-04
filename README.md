@@ -8,13 +8,11 @@ Features:
 Can be used for code and script generation.
 2. Builders
 
-    ORMBuilder.ORMFromDynamicQueryResult
-
-    ORMBuilder.GenORMTableTypeCode
+ ORMBuilder.ORMFromDynamicQueryResult
+ ORMBuilder.GenORMTableTypeCode
 
 ORMGen.Builders packet
-
-    MSSQLORMBuilder.ORMFromSCHEMA
+ MSSQLORMBuilder.ORMFromSCHEMA
 
 Object initialization:
 --------
