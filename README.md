@@ -6,6 +6,11 @@ Features:
 --------
 1. Helper object populated class metadata and specialized custom attributes.
 Can be used for code and script generation.
+2. Builders
+    ORMBuilder.ORMFromDynamicQueryResult
+    ORMBuilder.GenORMTableTypeCode
+ORMGen.Builders packet
+    MSSQLORMBuilder.ORMFromSCHEMA
 
 Object initialization:
 --------

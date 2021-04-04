@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace ORMGen.Builders
 {
@@ -139,13 +138,15 @@ namespace ORMGen.Builders
 
             var orm = new ORMTableInfo();
 
-            // Append attributes
+            // attributes
 
             var for_table_name = ORMHelper.RemoveBrackets(table_name);
             orm.Name = ORMHelper.ToValidNameRegex.Replace(for_table_name, "_");
             orm.TableName = for_table_name;
             orm.As = As;
             orm.Title = ORMGen.ORMHelper.ByViewRule(orm.Name, orm.Rules);
+
+            // properties
 
             orm.Props = columnset.Select(row =>
             {
