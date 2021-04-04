@@ -122,7 +122,7 @@ namespace ORMGen.Builders
                     result.AddRange(orm_list.Where(orm => !result.Contains(orm)));
                     var ref_target_orm = result.FirstOrDefault(orm => ORMHelper.RemoveBrackets(orm.TableName) == target_table_name);
                     if (ref_target_orm == null)
-                        ref_target_orm = result.FirstOrDefault(orm => orm.Name == target_table_name || type.Name == ORMHelper.ToValidNameRegex.Replace(table_name, "_"));
+                        ref_target_orm = result.FirstOrDefault(orm => (orm.Name == target_table_name || type.Name == ORMHelper.ToValidNameRegex.Replace(table_name, "_")));
 
                     if (ref_target_orm != null && ref_target_orm.Type != null)
                     {
