@@ -31,6 +31,11 @@ var orm = new ORMTableInfo<SomeClass>(DBProviderEnum.MSSql);
 
 orm.UseRules(ORMRulEnum.ViewHumanitaize | ORMRulEnum.DBReplaceUnderscoresWithSpaces);
 
+also
+
+ORMTableInfo.SetDefaultDBProvider(...);
+ORMTableInfo.SetDefaultRules(...);
+
 ```
 
 Something like this:
