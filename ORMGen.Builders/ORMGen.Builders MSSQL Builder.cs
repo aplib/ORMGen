@@ -147,6 +147,8 @@ namespace ORMGen.Builders
             }
 
             orm.Props = properties.ToArray();
+            orm.Keys = properties.Where(prop => prop.isKey).ToArray();
+            orm.References = properties.Where(prop => prop.RefType != null).ToArray();
 
             return result;
         }

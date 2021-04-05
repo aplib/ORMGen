@@ -164,6 +164,8 @@ namespace ORMGen.Builders
                 return orm_pi;
             }).ToArray();
 
+            orm.Keys = orm.Props.Where(prop => prop.isKey).ToArray();
+            orm.References = orm.Props.Where(prop => prop.RefType != null).ToArray();
             return orm;
         }
 
