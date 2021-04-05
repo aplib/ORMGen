@@ -38,10 +38,10 @@ namespace ORMGen.Builders
                 result.Add(already_exist);
                 return result;
             }
-            ORMTableInfo.SetDefaultDBProvider(DBProviderEnum.MSSql);
 
             // Construct orm & attribytes
 
+            ORMTableInfo.SetDefaultDBProvider(DBProviderEnum.MSSql);
             var orm = new ORMTableInfo() { Name = orm_name, TableName = table_name, As = orm_name.ToLower() };
 
             try
@@ -60,8 +60,6 @@ namespace ORMGen.Builders
                         if (ormtable_attr != null && ORMHelper.RemoveBrackets(ormtable_attr.TableName) == table_name)
                         {
                             orm.Type = type;
-                            // there:
-
                             break;
                         }
                     }
