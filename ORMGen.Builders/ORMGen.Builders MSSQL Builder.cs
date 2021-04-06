@@ -12,6 +12,8 @@ namespace ORMGen.Builders
     /// </summary>
     public static class MSSQLORMBuilder
     {
+
+
         /// <summary>
         /// Link types only for reference to existing type,
         /// this link may be incorrect due to duplicate names or assembly binding is incorrect.
@@ -23,10 +25,12 @@ namespace ORMGen.Builders
         /// </summary>
         /// <param name="conn"></param>
         /// <param name="table_name">name of database table</param>
-        /// <param name="domain">application domain for metadata exploring</param>
+        /// <param name="assemblies">assemblies for metadata reference resolving</param>
         /// <param name="parent_list">optional list of ORMTableInfo for iteration and reqursive calling</param>
         /// <returns></returns>
-        public static IList<ORMTableInfo> ORMFromSCHEMA(IDbConnection conn, string table_name, AppDomain domain, IList<ORMTableInfo> parent_list = null)
+        /// public static IList<ORMTableInfo> ORMFromSCHEMA(IDbConnection conn, string table_name, Assembly domain, IList<ORMTableInfo> parent_list = null)
+
+        public static IList<ORMTableInfo> ORMFromSCHEMA(IDbConnection conn, string table_name, IEnumerable<Assembly> assemblies, IList<ORMTableInfo> parent_list = null)
         {
             var result = new List<ORMTableInfo>();
             var orm_table_name = ORMHelper.RemoveBrackets(table_name);
@@ -51,7 +55,7 @@ namespace ORMGen.Builders
                 // errors will be  detected during compilation of builded souce code and runtime
 
                 // try by table name
-                foreach (var assembly in domain.GetAssemblies())
+                foreach (var assembly in assemblies)
                 {
                     var types = assembly.GetTypes();
                     foreach (var type in types)
@@ -65,7 +69,7 @@ namespace ORMGen.Builders
                     }
                 }
                 // try by structure or class name
-                foreach (var assembly in domain.GetAssemblies())
+                foreach (var assembly in assemblies)
                 {
                     var types = assembly.GetTypes();
                     foreach (var type in types)
@@ -115,7 +119,7 @@ namespace ORMGen.Builders
                 {
                     // create referenced orm info types
 
-                    var orm_list = ORMFromSCHEMA(conn, target_table_name, domain, result);
+                    var orm_list = ORMFromSCHEMA(conn, target_table_name, assemblies, result);
 
                     result.AddRange(orm_list.Where(orm => !result.Contains(orm)));
                     var ref_target_orm = result.FirstOrDefault(orm => ORMHelper.RemoveBrackets(orm.TableName) == target_table_name);

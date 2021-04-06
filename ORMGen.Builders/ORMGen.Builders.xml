@@ -9,21 +9,6 @@
             For Microsoft SQL server data access orm builder
             </summary>
         </member>
-        <member name="M:ORMGen.Builders.MSSQLORMBuilder.ORMFromSCHEMA(System.Data.IDbConnection,System.String,System.AppDomain,System.Collections.Generic.IList{ORMGen.ORMTableInfo})">
-            <summary>
-            Link types only for reference to existing type,
-            this link may be incorrect due to duplicate names or assembly binding is incorrect.
-            Eerrors will be detected during compilation of builded souce code and runtime.
-            If referebce target ORM type hasn't created yet
-            need a second pass with existing types to bind.
-            By default reference may writed as string type.
-            Expensive.
-            </summary>
-            <param name="conn"></param>
-            <param name="table_name">name of database table</param>
-            <param name="domain">application domain for metadata exploring</param>
-            <param name="parent_list">optional list of ORMTableInfo for iteration and reqursive calling</param>
-            <returns></returns>
-        </member>
+        <!-- Badly formed XML comment ignored for member "M:ORMGen.Builders.MSSQLORMBuilder.ORMFromSCHEMA(System.Data.IDbConnection,System.String,System.Collections.Generic.IEnumerable{System.Reflection.Assembly},System.Collections.Generic.IList{ORMGen.ORMTableInfo})" -->
     </members>
 </doc>
