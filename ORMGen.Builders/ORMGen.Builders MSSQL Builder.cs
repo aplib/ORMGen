@@ -12,8 +12,6 @@ namespace ORMGen.Builders
     /// </summary>
     public static class MSSQLORMBuilder
     {
-
-
         /// <summary>
         /// Link types only for reference to existing type,
         /// this link may be incorrect due to duplicate names or assembly binding is incorrect.
