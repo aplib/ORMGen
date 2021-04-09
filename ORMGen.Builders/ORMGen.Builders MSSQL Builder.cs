@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
+using static ORMGen.ORMHelper;
 
 namespace ORMGen.Builders
 {
@@ -31,10 +32,10 @@ namespace ORMGen.Builders
         public static IList<ORMTableInfo> ORMFromSCHEMA(IDbConnection conn, string table_name, IEnumerable<Assembly> assemblies, IList<ORMTableInfo> parent_list = null)
         {
             var result = new List<ORMTableInfo>();
-            var orm_table_name = ORMHelper.RemoveBrackets(table_name);
-            var orm_name = ORMHelper.ToValidNameRegex.Replace(orm_table_name, "_");
+            var orm_table_name = RemoveBrackets(table_name);
+            var orm_name = ToValidNameRegex.Replace(orm_table_name, "_");
 
-            var already_exist = parent_list?.FirstOrDefault(orm => ORMHelper.RemoveBrackets(orm.TableName) == orm_table_name);
+            var already_exist = parent_list?.FirstOrDefault(orm => RemoveBrackets(orm.TableName) == orm_table_name);
             if (already_exist != null)
             {
                 result.Add(already_exist);
@@ -59,7 +60,7 @@ namespace ORMGen.Builders
                     foreach (var type in types)
                     {
                         var ormtable_attr = type.GetCustomAttribute<ORMTableAttribute>();
-                        if (ormtable_attr != null && ORMHelper.RemoveBrackets(ormtable_attr.TableName) == table_name)
+                        if (ormtable_attr != null && RemoveBrackets(ormtable_attr.TableName) == table_name)
                         {
                             orm.Type = type;
                             break;
@@ -73,7 +74,7 @@ namespace ORMGen.Builders
                     foreach (var type in types)
                     {
                         var ormtable_attr = type.GetCustomAttribute<ORMTableAttribute>();
-                        if (ormtable_attr != null && (type.Name == table_name || type.Name == ORMHelper.ToValidNameRegex.Replace(table_name, "_")) && ormtable_attr.TableName.Blank())
+                        if (ormtable_attr != null && (type.Name == table_name || type.Name == ToValidNameRegex.Replace(table_name, "_")) && ormtable_attr.TableName.Blank())
                         {
                             orm.Type = type;
                             break;
@@ -104,9 +105,9 @@ namespace ORMGen.Builders
                 // orm property attributes
 
                 var type = ParseDataType(row.DATA_TYPE);
-                var name = ORMHelper.ToValidNameRegex.Replace(row.COLUMN_NAME, "_");
-                var title = ORMHelper.ByViewRule(row.COLUMN_NAME, orm.Rules);
-                var field = ORMHelper.ByDBRule(row.COLUMN_NAME, orm.Rules);
+                var name = ToValidNameRegex.Replace(row.COLUMN_NAME, "_");
+                var title = ByViewRule(row.COLUMN_NAME, orm.Rules);
+                var field = ByDBRule(row.COLUMN_NAME, orm.Rules);
                 var orm_pi = new ORMPropertyInfo(orm, name, type) { Title = title, Field = field };
 
                 // from schema
@@ -120,9 +121,9 @@ namespace ORMGen.Builders
                     var orm_list = ORMFromSCHEMA(conn, target_table_name, assemblies, result);
 
                     result.AddRange(orm_list.Where(orm => !result.Contains(orm)));
-                    var ref_target_orm = result.FirstOrDefault(orm => ORMHelper.RemoveBrackets(orm.TableName) == target_table_name);
+                    var ref_target_orm = result.FirstOrDefault(orm => RemoveBrackets(orm.TableName) == target_table_name);
                     if (ref_target_orm == null)
-                        ref_target_orm = result.FirstOrDefault(orm => (orm.Name == target_table_name || type.Name == ORMHelper.ToValidNameRegex.Replace(table_name, "_")));
+                        ref_target_orm = result.FirstOrDefault(orm => (orm.Name == target_table_name || type.Name == ToValidNameRegex.Replace(table_name, "_")));
 
                     if (ref_target_orm != null && ref_target_orm.Type != null)
                     {

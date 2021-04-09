@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using static ORMGen.ORMHelper;
 
 namespace ORMGen.Builders
 {
@@ -140,17 +141,17 @@ namespace ORMGen.Builders
 
             // attributes
 
-            var for_table_name = ORMHelper.RemoveBrackets(table_name);
-            orm.Name = ORMHelper.ToValidNameRegex.Replace(for_table_name, "_");
+            var for_table_name = RemoveBrackets(table_name);
+            orm.Name = ToValidNameRegex.Replace(for_table_name, "_");
             orm.TableName = for_table_name;
             orm.As = As;
-            orm.Title = ORMGen.ORMHelper.ByViewRule(orm.Name, orm.Rules);
+            orm.Title = ByViewRule(orm.Name, orm.Rules);
 
             // properties
 
             orm.Props = columnset.Select(row =>
             {
-                var property_name = ORMHelper.ToValidNameRegex.Replace(row.Name, "_");
+                var property_name = ToValidNameRegex.Replace(row.Name, "_");
 
                 var value_type = row.Type;
                 if ((value_type.IsValueType || value_type == typeof(DateTime)) && row.Nullable)
@@ -158,8 +159,8 @@ namespace ORMGen.Builders
 
                 var orm_pi = new ORMPropertyInfo(orm, property_name, row.Type)
                 {
-                    Field = ORMHelper.ByDBRule(property_name, orm.Rules),
-                    Title = ORMHelper.ByViewRule(property_name, orm.Rules)
+                    Field = ByDBRule(property_name, orm.Rules),
+                    Title = ByViewRule(property_name, orm.Rules)
                 };
                 return orm_pi;
             }).ToArray();
@@ -188,10 +189,10 @@ namespace ORMGen.Builders
 
             var sb = new StringBuilder();
 
-            var for_table_name = ORMHelper.RemoveBrackets(orm.TableName);
+            var for_table_name = RemoveBrackets(orm.TableName);
             if (orm.Name.Blank())
                 throw new ArgumentException("Unassigned or invalid orm name");
-            if (ORMHelper.RemoveBrackets(orm.TableName).Blank())
+            if (RemoveBrackets(orm.TableName).Blank())
                 throw new ArgumentException("Unassigned or invalid orm table name");
 
             var generate_type_class = Enum.GetName(output_type).ToLower();
@@ -202,10 +203,10 @@ namespace ORMGen.Builders
 
             var values = new List<string>(5);
 
-            if (ORMHelper.ByViewRule(orm.Name, current_rules) != orm.Title && orm.Title.notBlank())
+            if (ByViewRule(orm.Name, current_rules) != orm.Title && orm.Title.notBlank())
                 values.Add("Title = \"" + orm.Title + "\"");
 
-            if (for_table_name != ORMHelper.ByDBRule(orm.Name, current_rules))
+            if (for_table_name != ByDBRule(orm.Name, current_rules))
                 values.Add((string)("TableName = \"" + for_table_name + "\""));
 
             if (orm.As.notBlank()) values.Add("As = \"" + orm.As + "\"");
@@ -224,11 +225,11 @@ namespace ORMGen.Builders
             {
                 values.Clear();
 
-                var for_title = ORMHelper.ByViewRule(orm_pi.Name, current_rules);
+                var for_title = ByViewRule(orm_pi.Name, current_rules);
                 if (for_title != orm_pi.Name || orm_pi.Title != orm_pi.Name)
                     values.Add($@"Title = ""{orm_pi.Title ?? for_title}""");
 
-                var for_field = ORMHelper.ByDBRule(orm_pi.Name, current_rules);
+                var for_field = ByDBRule(orm_pi.Name, current_rules);
                 if (for_field != orm_pi.Name || orm_pi.Field != orm_pi.Name)
                     values.Add($@"Field = ""{orm_pi.Field ?? for_field}""");
 
