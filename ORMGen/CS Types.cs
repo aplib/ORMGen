@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using static ORMGen.ORMHelper;
 
-namespace ORMGen.Builders
+namespace ORMGen
 {
     /// <summary>
     /// Common C# type extension
     /// </summary>
-	public static partial class CSHelper
+	public static partial class ORMCSHelper
     {
         /// <summary>
         /// Check if type is nullable
@@ -78,6 +78,9 @@ namespace ORMGen.Builders
         /// <returns>String Type name</returns>
         public static string CSTypeSyntax(this Type type)
         {
+            if (type == null)
+                throw new ArgumentNullException();
+
             if (type_names.TryGetValue(type, out var name))
                 return name;
 

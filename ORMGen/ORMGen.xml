@@ -4,19 +4,19 @@
         <name>ORMGen</name>
     </assembly>
     <members>
-        <member name="T:ORMGen.Builders.CSHelper">
+        <member name="T:ORMGen.ORMCSHelper">
             <summary>
             Common C# type extension
             </summary>
         </member>
-        <member name="M:ORMGen.Builders.CSHelper.isNullable(System.Type)">
+        <member name="M:ORMGen.ORMCSHelper.isNullable(System.Type)">
             <summary>
             Check if type is nullable
             </summary>
             <param name="type">Type type</param>
             <returns>True if type is Nullable&lt;&gt;</returns>
         </member>
-        <member name="M:ORMGen.Builders.CSHelper.Blank(System.String)">
+        <member name="M:ORMGen.ORMCSHelper.Blank(System.String)">
             <summary>
             Indicates whether a specified string is null, empty, or consists only of white-space characters.
             calls string.IsNullOrWhiteSpace()
@@ -24,21 +24,21 @@
             <param name="str">The string to test.</param>
             <returns>reault of string.IsNullOrWhiteSpace()</returns>
         </member>
-        <member name="M:ORMGen.Builders.CSHelper.notBlank(System.String)">
+        <member name="M:ORMGen.ORMCSHelper.notBlank(System.String)">
             <summary>
             Indicates whether a specified string is not null and contains not white-space characters.
             </summary>
             <param name="str"></param>
             <returns></returns>
         </member>
-        <member name="M:ORMGen.Builders.CSHelper.CSTypeSyntax(System.Type)">
+        <member name="M:ORMGen.ORMCSHelper.CSTypeSyntax(System.Type)">
             <summary>
             Get type name C# syntax
             </summary>
             <param name="type">Type</param>
             <returns>String Type name</returns>
         </member>
-        <member name="M:ORMGen.Builders.ORMBuilder.ORMFromDynamicQueryResult(System.Collections.Generic.IEnumerable{System.Object},System.String,System.String)">
+        <member name="M:ORMGen.ORMBuilder.ORMFromDynamicQueryResult(System.Collections.Generic.IEnumerable{System.Object},System.String,System.String)">
             <summary>
             Build ORMTableInfo class instance from dynamic query result with default provider binding
             </summary>
@@ -47,7 +47,7 @@
             <param name="As">as short name</param>
             <returns>ORMTableInfo</returns>
         </member>
-        <member name="M:ORMGen.Builders.ORMBuilder.GenORMTableTypeCode(ORMGen.ORMTableInfo,ORMGen.Builders.ORMBuilder.GenerateTypeNameEnum)">
+        <member name="M:ORMGen.ORMBuilder.GenORMTableTypeCode(ORMGen.ORMTableInfo,ORMGen.ORMBuilder.GenerateTypeNameEnum)">
             <summary>
             Build ORMTable data model source code
             </summary>
@@ -55,7 +55,7 @@
             <param name="output_type">Typ of output structure or class</param>
             <returns></returns>
         </member>
-        <member name="T:ORMGen.Builders.ORMBuilder.GenerateTypeNameEnum">
+        <member name="T:ORMGen.ORMBuilder.GenerateTypeNameEnum">
             <summary>
             Output model type
             </summary>
