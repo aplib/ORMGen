@@ -27,8 +27,6 @@ namespace ORMGen.Builders
         /// <param name="assemblies">assemblies for metadata reference resolving</param>
         /// <param name="parent_list">optional list of ORMTableInfo for iteration and reqursive calling</param>
         /// <returns></returns>
-        /// public static IList<ORMTableInfo> ORMFromSCHEMA(IDbConnection conn, string table_name, Assembly domain, IList<ORMTableInfo> parent_list = null)
-
         public static IList<ORMTableInfo> ORMFromSCHEMA(IDbConnection conn, string table_name, IEnumerable<Assembly> assemblies, IList<ORMTableInfo> parent_list = null)
         {
             var result = new List<ORMTableInfo>();
