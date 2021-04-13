@@ -90,7 +90,7 @@ namespace ORMGen.Builders
 
             // load schema
 
-            var schema_columns = conn.Query<SCHEMA_COLUMNS>($@"select * from INFORMATION_SCHEMA.COLUMNS order by ORDINAL_POSITION asc");
+            var schema_columns = conn.Query<SCHEMA_COLUMNS>($@"select * from INFORMATION_SCHEMA.COLUMNS");
             var columns = schema_columns.Where(row => row.TABLE_NAME.Trim() == table_name);
             var schema_pks = conn.Query<sp_pkeys>($@"EXEC sp_pkeys [{table_name}]");
             var schema_fks = conn.Query<sp_foreign_keys_rowset2>($@"EXEC sp_foreign_keys_rowset2 [{table_name}]");
@@ -254,6 +254,5 @@ namespace ORMGen.Builders
         public short DEFERRABILITY { get; set; }
     }
 }
-
 
 
