@@ -1,6 +1,7 @@
 *.rar
 *.bat
 *.sln
+*.dll
 .vs/
 bin/
 obj/
