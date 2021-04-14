@@ -157,16 +157,6 @@
             Set mapping rules
             </summary>
         </member>
-        <member name="M:ORMGen.ORMTableInfo.#ctor">
-            <summary>
-            Default parameterless constructor
-            </summary>
-        </member>
-        <member name="M:ORMGen.ORMTableInfo.#ctor(System.Nullable{ORMGen.DBProviderEnum},System.Nullable{ORMGen.ORMRulEnum})">
-            <summary>
-            Constructor with selecting databse provider and rules
-            </summary>
-        </member>
         <member name="M:ORMGen.ORMTableInfo.SetDefaultDBProvider(ORMGen.DBProviderEnum)">
             <summary>
             Set a default databse provider
@@ -182,6 +172,27 @@
         <member name="M:ORMGen.ORMTableInfo.SetDefaultRules(ORMGen.ORMRulEnum)">
             <summary>
             Set default mapping rules
+            </summary>
+        </member>
+        <member name="M:ORMGen.ORMTableInfo.#ctor">
+            <summary>
+            Default parameterless constructor
+            </summary>
+        </member>
+        <member name="M:ORMGen.ORMTableInfo.#ctor(System.Nullable{ORMGen.DBProviderEnum},System.Nullable{ORMGen.ORMRulEnum})">
+            <summary>
+            Constructor with selecting databse provider and rules
+            </summary>
+        </member>
+        <member name="M:ORMGen.ORMTableInfo.#ctor(System.Type)">
+            <summary>
+            Constructor with specified ORMTable ttpe
+            </summary>
+            <param name="type"></param>
+        </member>
+        <member name="M:ORMGen.ORMTableInfo.#ctor(System.Type,System.Nullable{ORMGen.DBProviderEnum},System.Nullable{ORMGen.ORMRulEnum})">
+            <summary>
+            Constructor with specified ORMTable type, optional selecting DB provider, rules, and filling from metadata
             </summary>
         </member>
         <member name="F:ORMGen.ORMHelper.ToValidNameRegex">
@@ -316,7 +327,7 @@
         </member>
         <member name="M:ORMGen.ORMTableInfo`1.#ctor(System.Nullable{ORMGen.DBProviderEnum},System.Nullable{ORMGen.ORMRulEnum})">
             <summary>
-            Constructor of a specified ORMTable with optional selecting default DB provider, rules, and filling from metadata
+            Constructor of a specified ORMTable with optional selecting DB provider, rules, and filling from metadata
             </summary>
         </member>
         <member name="T:ORMGen.ORMTableAttribute">

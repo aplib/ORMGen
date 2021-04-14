@@ -149,24 +149,6 @@ namespace ORMGen
 		}
 
 
-		/// <summary>
-		/// Default parameterless constructor
-		/// </summary>
-		public ORMTableInfo()
-		{
-			UseDBProvider(default_db_provider);
-			UseRules(default_mapping_rules);
-		}
-		/// <summary>
-		/// Constructor with selecting databse provider and rules
-		/// </summary>
-		public ORMTableInfo(DBProviderEnum? provider = null, ORMRulEnum? rules = null)
-		{
-			UseDBProvider(provider ?? default_db_provider);
-			UseRules(rules ?? default_mapping_rules);
-		}
-
-
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		internal protected static ORMRulEnum default_mapping_rules = ORMRulEnum.DBReplaceUnderscoresWithSpaces | ORMRulEnum.ViewHumanitaize;
 		internal protected static DBProviderEnum default_db_provider { get; set; } = DBProviderEnum.MSSql;
@@ -203,6 +185,118 @@ namespace ORMGen
 		public static void SetDefaultRules(ORMRulEnum rules)
 		{
 			default_mapping_rules = rules;
+		}
+
+
+		/// <summary>
+		/// Default parameterless constructor
+		/// </summary>
+		public ORMTableInfo()
+		{
+			UseDBProvider(default_db_provider);
+			UseRules(default_mapping_rules);
+		}
+		/// <summary>
+		/// Constructor with selecting databse provider and rules
+		/// </summary>
+		public ORMTableInfo(DBProviderEnum? provider = null, ORMRulEnum? rules = null)
+		{
+			UseDBProvider(provider ?? default_db_provider);
+			UseRules(rules ?? default_mapping_rules);
+		}
+		/// <summary>
+		/// Constructor with specified ORMTable ttpe
+		/// </summary>
+		/// <param name="type"></param>
+		public ORMTableInfo(Type type) : this (type, null, null)
+		{ }
+
+		/// <summary>
+		/// Constructor with specified ORMTable type, optional selecting DB provider, rules, and filling from metadata
+		/// </summary>
+		public ORMTableInfo(Type type, DBProviderEnum? provider = null, ORMRulEnum? rules = null)
+		{
+			FillProperties(type,  provider, rules);
+		}
+
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+		internal protected void FillProperties(Type type, DBProviderEnum? provider = null, ORMRulEnum? rules = null)
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+		{
+			UseDBProvider(provider ?? default_db_provider);
+			UseRules(rules ?? default_mapping_rules);
+
+			Type = type;
+			Name = Type.Name;
+
+			// Collect metadata
+
+			TypeInfo table_type_info = Type.GetTypeInfo();
+
+			var current_rules = Rules;
+			void SetRules(ORMRuleSwitcherAttribute attr, ORMRulEnum mask)
+			{
+				if ((attr.Rules & mask) != 0)
+					current_rules = (current_rules & ~mask) | (attr.Rules & mask);
+			};
+
+			var table_attr = table_type_info.GetCustomAttribute<ORMTableAttribute>();
+			if (table_attr == null)
+				throw new Exception($"ORMGen ORMTableInfo<{table_type_info.Name}>(): Table(TableAttribute) need for type");
+
+			// set class rules to current_rules
+			foreach (var rule_attr in table_type_info.GetCustomAttributes<ORMRuleSwitcherAttribute>())
+			{
+				SetRules(rule_attr, ORMRulEnum.__DBMask);
+				SetRules(rule_attr, ORMRulEnum.__ViewMask);
+			}
+
+			TableName = table_attr.TableName ?? ORMHelper.ByDBRule(table_type_info.Name, current_rules);
+			Title = table_attr.Title ?? ORMHelper.ByViewRule(table_type_info.Name, current_rules);
+			IdProperty = table_attr.IdProperty;
+			TextProperty = table_attr.TextProperty;
+			Readonly = table_attr.Readonly;
+			As = table_attr.As ?? table_type_info.Name;
+			As = Regex.Replace(ORMHelper.RemoveBrackets(As).ToLower(), $@"[\W\s_\~\!\@\#\$\%\^\'\""\`\&\*\(\)\[\]]+", "_");
+
+			// For all properties:
+
+			var props = table_type_info.GetProperties();
+			var all_orm_pi = new List<ORMPropertyInfo>(props.Length);
+
+			foreach (var prop_info in props)
+			{
+				// apply property rules to current_rules
+				foreach (var rule_attr in prop_info.GetCustomAttributes<ORMRuleSwitcherAttribute>())
+				{
+					SetRules(rule_attr, ORMRulEnum.__DBMask);
+					SetRules(rule_attr, ORMRulEnum.__ViewMask);
+				}
+
+				// create ORMPropertyInfo
+				var orm_pi = new ORMPropertyInfo() { Parent = this, Type = prop_info.PropertyType, Name = prop_info.Name };
+
+				// apply property attributes
+				var orm_prop_attr = prop_info.GetCustomAttribute<ORMPropertyAttribute>();
+				if (orm_prop_attr != null)
+				{
+					orm_pi.Title = orm_prop_attr.Title ?? ORMHelper.ByViewRule(orm_pi.Name, current_rules & ORMRulEnum.__ViewMask);
+					orm_pi.Field = orm_prop_attr.Field ?? ORMHelper.ByDBRule(orm_pi.Name, current_rules & ORMRulEnum.__DBMask);
+					orm_pi.Format = orm_prop_attr.Format;
+					orm_pi.isKey = orm_prop_attr.isKey;
+					orm_pi.Readonly = orm_prop_attr.Readonly;
+					orm_pi.RefType = orm_prop_attr.RefType;
+					orm_pi.Hide = orm_prop_attr.Hide;
+				}
+
+				if (orm_pi.Title == null) orm_pi.Title = ORMHelper.ByViewRule(orm_pi.Name, current_rules & ORMRulEnum.__ViewMask);
+				if (orm_pi.Field == null) orm_pi.Field = ORMHelper.ByDBRule(orm_pi.Name, current_rules & ORMRulEnum.__DBMask);
+
+				all_orm_pi.Add(orm_pi);
+			}
+			Props = all_orm_pi.ToArray();
+			Keys = all_orm_pi.Where(prop => prop.isKey).ToArray();
+			References = all_orm_pi.Where(prop => prop.RefType != null).ToArray();
 		}
 	}
 
@@ -386,89 +480,13 @@ namespace ORMGen
 		/// <summary>
 		/// Default parameterless constructor of a specified ORMTable
 		/// </summary>
-		public ORMTableInfo() : this(null, null)
-		{
-		}
+		public ORMTableInfo() : base(typeof(T), null, null)
+		{ }
 		/// <summary>
-		/// Constructor of a specified ORMTable with optional selecting default DB provider, rules, and filling from metadata
+		/// Constructor of a specified ORMTable with optional selecting DB provider, rules, and filling from metadata
 		/// </summary>
-		public ORMTableInfo(DBProviderEnum? provider = null, ORMRulEnum? rules = null)
-		{
-			UseDBProvider(provider ?? default_db_provider);
-			UseRules(rules ?? default_mapping_rules);
-
-			Type = typeof(T);
-			Name = Type.Name;
-
-			// Collect metadata
-
-			TypeInfo table_type_info = Type.GetTypeInfo();
-
-			var current_rules = Rules;
-			void SetRules(ORMRuleSwitcherAttribute attr, ORMRulEnum mask)
-			{
-				if ((attr.Rules & mask) != 0)
-					current_rules = (current_rules & ~mask) | (attr.Rules & mask);
-			};
-
-			var table_attr = table_type_info.GetCustomAttribute<ORMTableAttribute>();
-			if (table_attr == null)
-				throw new Exception($"ORMGen ORMTableInfo<{table_type_info.Name}>(): Table(TableAttribute) need for type");
-
-			// set class rules to current_rules
-			foreach (var rule_attr in table_type_info.GetCustomAttributes<ORMRuleSwitcherAttribute>())
-			{
-				SetRules(rule_attr, ORMRulEnum.__DBMask);
-				SetRules(rule_attr, ORMRulEnum.__ViewMask);
-			}
-
-			TableName = table_attr.TableName ?? ORMHelper.ByDBRule(table_type_info.Name, current_rules);
-			Title = table_attr.Title ?? ORMHelper.ByViewRule(table_type_info.Name, current_rules);
-			IdProperty = table_attr.IdProperty;
-			TextProperty = table_attr.TextProperty;
-			Readonly = table_attr.Readonly;
-			As = table_attr.As ?? table_type_info.Name;
-			As = Regex.Replace(ORMHelper.RemoveBrackets(As).ToLower(), $@"[\W\s_\~\!\@\#\$\%\^\'\""\`\&\*\(\)\[\]]+", "_");
-
-			// For all properties:
-
-			var props = table_type_info.GetProperties();
-			var all_orm_pi = new List<ORMPropertyInfo>(props.Length);
-
-			foreach (var prop_info in props)
-			{
-				// apply property rules to current_rules
-				foreach (var rule_attr in prop_info.GetCustomAttributes<ORMRuleSwitcherAttribute>())
-				{
-					SetRules(rule_attr, ORMRulEnum.__DBMask);
-					SetRules(rule_attr, ORMRulEnum.__ViewMask);
-				}
-
-				// create ORMPropertyInfo
-				var orm_pi = new ORMPropertyInfo() { Parent = this, Type = prop_info.PropertyType, Name = prop_info.Name };
-
-				// apply property attributes
-				var orm_prop_attr = prop_info.GetCustomAttribute<ORMPropertyAttribute>();
-				if (orm_prop_attr != null)
-				{
-					orm_pi.Title = orm_prop_attr.Title ?? ORMHelper.ByViewRule(orm_pi.Name, current_rules & ORMRulEnum.__ViewMask);
-					orm_pi.Field = orm_prop_attr.Field ?? ORMHelper.ByDBRule(orm_pi.Name, current_rules & ORMRulEnum.__DBMask);
-					orm_pi.Format = orm_prop_attr.Format;
-					orm_pi.isKey = orm_prop_attr.isKey;
-					orm_pi.Readonly = orm_prop_attr.Readonly;
-					orm_pi.RefType = orm_prop_attr.RefType;
-					orm_pi.Hide = orm_prop_attr.Hide;
-				}
-
-				if (orm_pi.Title == null) orm_pi.Title = ORMHelper.ByViewRule(orm_pi.Name, current_rules & ORMRulEnum.__ViewMask);
-				if (orm_pi.Field == null) orm_pi.Field = ORMHelper.ByDBRule(orm_pi.Name, current_rules & ORMRulEnum.__DBMask);
-
-				all_orm_pi.Add(orm_pi);
-			}
-			Props = all_orm_pi.ToArray();
-			Keys = all_orm_pi.Where(prop => prop.isKey).ToArray();
-			References = all_orm_pi.Where(prop => prop.RefType != null).ToArray();
-		}
+		public ORMTableInfo(DBProviderEnum? provider = null, ORMRulEnum? rules = null) : base(typeof(T), provider, rules)
+		{ }
 	}
 
 	/// <summary>
