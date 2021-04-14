@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.78" />
-    <PackageReference Include="ORMGen" Version="1.0.16" />
+    <PackageReference Include="ORMGen" Version="1.0.17" />
   </ItemGroup>
 
   <ItemGroup>
