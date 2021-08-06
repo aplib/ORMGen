@@ -724,7 +724,7 @@ namespace ORMGen
 	/// <summary>
 	/// ORM data table Base class of ORM data table, used to build extensions
 	/// </summary>
-	public class ORMData
+	public class ORMTable
 	{
 	}
 

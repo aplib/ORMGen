@@ -559,7 +559,7 @@
             </summary>
             <param name="rules"></param>
         </member>
-        <member name="T:ORMGen.ORMData">
+        <member name="T:ORMGen.ORMTable">
             <summary>
             ORM data table Base class of ORM data table, used to build extensions
             </summary>
